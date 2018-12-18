@@ -1,9 +1,19 @@
 
-from pdf2jpg import pdf2jpg
-
-inputpath = r"Toeic_scan.pdf"
-outputpath = r"Img"
+from pdf2image import convert_from_path
+import os
 
 
-result = pdf2jpg.convert_pdf2jpg(inputpath, outputpath, pages="ALL")
-print(result)
+def pdf2image(inputPath):
+    directory = "temp"
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    pages = convert_from_path(inputPath, 500)
+
+    i=0
+    for page in pages:
+        page.save(directory+'/out'+str(i)+'.jpg', 'JPEG')
+        i += 1
+    return i
+
+#pdf2image("Toeic_scan.pdf")
