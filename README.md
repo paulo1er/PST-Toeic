@@ -1,3 +1,3 @@
 # PST-Toeic
 
-correct the toeic automaticly
+correct the toeic automatically
