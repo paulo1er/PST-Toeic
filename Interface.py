@@ -1,7 +1,17 @@
-from tkFileDialog import *
+import tkFileDialog
+
+
 
 def interface(string):
-    filepath = askopenfilename(title=string,filetypes=[('pdf files', '.pdf')])
+    #pour cacher l'autre fenetre
+    #root = Tkinter.Tk()
+    #root.withdraw()
+    
+    filepath = tkFileDialog.askopenfilename(title=string,filetypes=[('pdf files', '.pdf')])
     return(filepath)
 
-#print(interface())
+
+
+if __name__ == '__main__':
+    a=interface("test")
+    print(a)

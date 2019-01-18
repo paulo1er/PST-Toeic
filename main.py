@@ -21,17 +21,30 @@ def getAnswers(filepath):
 
 
 
+def main():
+    filepathCorr = interface("Choisir le pdf du corrigé")  #si aucun doc choisi : probleme
+    filepathEleves = interface("Choisir le pdf des copies")
+    
+    
+    answersCorr=getAnswers(filepathCorr)[0]
+    answersEleves=getAnswers(filepathEleves)
+    #print("answersCorr : "+str(answersCorr))
+    #print("answersEleves : "+str(answersEleves))
+    scores=compareAll(answersCorr,answersEleves)
+    
+    
+    print("scores : "+str(scores))
+    
+    export(scores)
 
-filepathCorr = interface("Choisir le pdf du corrigé")  #si aucun doc choisi : probleme
-filepathEleves = interface("Choisir le pdf des copies")
 
-
-answersCorr=getAnswers(filepathCorr)[0]
-answersEleves=getAnswers(filepathEleves)
-
-scores=compareAll(answersCorr,answersEleves)
-
-
-print("scores : "+str(scores))
-
-export(scores)
+import cProfile
+ 
+pr = cProfile.Profile()
+pr.enable()
+ 
+main()
+ 
+pr.disable()
+ 
+pr.print_stats(sort='cumtime')
