@@ -10,7 +10,7 @@ from score import compareAll
 #prend en entée le chemin vers un pdf et donne les réponses ABCD données
 def getAnswers(filepath):
     n = pdf2image(filepath)
-    
+    """faudra penser a matcher la resolution de p2j avec celle de la photocopieuse"""
     results = []
     for i in range(n):
         print(i)

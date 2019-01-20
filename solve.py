@@ -1,65 +1,31 @@
 import cv2 as cv
 import numpy as np
 import math
+from resize import resize
 
 
-def dist(point, org=(0, 0)):
-    return math.sqrt(math.pow(point[0] - org[0], 2) + math.pow(point[1] - org[1], 2))
-
-
-def resize(img):
-    width, height = img.shape[:2]
-
-    blurred = cv.GaussianBlur(img, (3, 3), 0)
-    gray = cv.cvtColor(blurred, cv.COLOR_BGR2GRAY)
-    thresh = cv.adaptiveThreshold(gray, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 5, 2)
-
-    lines = cv.HoughLinesP(thresh, 1, np.pi / 180, 100, minLineLength=100, maxLineGap=10)
-
-    top_left = (lines[0][0][0], lines[0][0][1])
-    bottom_right = (lines[0][0][0], lines[0][0][1])
-    bottom_left = (lines[0][0][0], lines[0][0][1])
-    top_right = (lines[0][0][0], lines[0][0][1])
-
-    for line in lines:
-        x1, y1, x2, y2 = line[0]
-
-        if dist((x1, y1)) < dist(top_left):
-            top_left = (x1, y1)
-        if dist((x2, y2)) < dist(top_left):
-            top_left = (x2, y2)
-
-        if dist((x1, y1)) > dist(bottom_right):
-            bottom_right = (x1, y1)
-        if dist((x2, y2)) > dist(bottom_right):
-            bottom_right = (x2, y2)
-
-        if dist((x1, y1), (0, width)) < dist(bottom_left, (0, width)):
-            bottom_left = (x1, y1)
-        if dist((x2, y2), (0, width)) < dist(bottom_left, (0, width)):
-            bottom_left = (x2, y2)
-
-        if dist((x1, y1), (0, width)) > dist(top_right, (0, width)):
-            top_right = (x1, y1)
-        if dist((x2, y2), (0, width)) > dist(top_right, (0, width)):
-            top_right = (x2, y2)
-
-    pts1 = np.float32([top_left, bottom_left, top_right, bottom_right])
-    pts2 = np.float32([[0, 0], [0, width], [height, 0], [height, width]])
-
-    M = cv.getPerspectiveTransform(pts1, pts2)
-
-    return cv.warpPerspective(img, M, (height, width))
+ 
 
 def solve(pathJPG, debug = False):
 
-    width = 944
-    height = 622
+    width = 970
+    height = 620
 
     img1 = cv.imread(pathJPG)
 
     img1 = resize(img1)
     img1 = cv.resize(img1, (width, height))
+    
+    if debug :
+        cv.imshow('resized', img1)
+        cv.waitKey(0)
+    
+   
+    """
+        
+    on l'a deja brouillee, grisee etc??
+
+    """
 
     gray = cv.cvtColor(img1, cv.COLOR_BGR2GRAY)
 
@@ -70,7 +36,8 @@ def solve(pathJPG, debug = False):
     if debug :
         cv.imshow('Image', img1)
         cv.waitKey(0)
-
+        
+    
         cv.imshow('Image', thresh)
         cv.waitKey(0)
 
@@ -125,10 +92,25 @@ def solve(pathJPG, debug = False):
     if debug :
         cv.imshow('Image', img1)
         cv.waitKey(0)
-
+  
     return result
 
-#result = solve(r'Img/Toeic_scan.pdf/0_Toeic_scan.pdf.jpg', True)
+
+if __name__ == '__main__':
+    
+    """
+    import cProfile
+ 
+    pr = cProfile.Profile()
+    pr.enable()
+    """ 
+    result = solve(r'Grille_Toeic-15-1.jpg', True)
+    """ 
+    pr.disable()
+     
+    pr.print_stats(sort='cumtime')
+    """
+    
 
 #ic=1
 #for i in result:
