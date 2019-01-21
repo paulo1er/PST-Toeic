@@ -18,16 +18,43 @@ def compare2(correction,answers):
     listeningNb=0
     readingNb=0
     
+    listeningParts = [ ["Description d'images",6] , ['Question-Response',25] , ['Dialogues',39] , ['Discussions - Annonces',30] ]
+    readingParts = [ ['Phrases à compléter',30] , ['Textes à compléter',16] , ['Lecture contenus redirigés,  Passages simples',29],['Lecture contenus redirigés, Passages multiples', 25] ]
+    listPartsNb = [ 0, 0, 0, 0 ]
+    readPartsNb = [ 0, 0, 0, 0 ]
+	
     for i in range(len(correction)):
         if correction[i]==answers[i]:
                 if i<100:
                     listeningNb+=1
+                    if i<6:
+                        listPartsNb[0]+=1
+                    elif i<6+25:
+                        listPartsNb[1]+=1
+                    elif i<6+25+39:
+                        listPartsNb[2]+=1
+                    else:
+                        listPartsNb[3]+=1
                 else:
                     readingNb+=1
+                    if i<30:
+                        readPartsNb[0]+=1
+                    elif i<30+16:
+                        readPartsNb[1]+=1
+                    elif i<30+16+29:
+                        readPartsNb[2]+=1
+                    else:
+                        readPartsNb[3]+=1
+                        
     listeningScore=tableListening[listeningNb]
     readingScore=tableReading[readingNb]
     
-    return (listeningScore, readingScore,listeningScore+readingScore)
+    for i in range(4):
+        listPartsNb[i] = str(listPartsNb[i]) + ' / ' + str(listeningParts[i][1])
+        readPartsNb[i] = str(readPartsNb[i]) + ' / ' + str(readingParts[i][1])
+    
+    result = [listeningScore+readingScore,listeningScore, readingScore] + listPartsNb + readPartsNb
+    return result
 
 
 

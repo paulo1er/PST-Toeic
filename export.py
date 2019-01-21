@@ -2,7 +2,7 @@
 
 def export(results):
     f = open("export.csv", "w")
-    csv = "name;listening;reading;total"
+    csv = "name;total;listening;reading;Description d'images;Question-Response;Dialogues;Discussions - Annonces;Phrases a completer;Textes a completer;Lecture contenus rediriges,  Passages simples;Lecture contenus rediriges, Passages multiples"
     csv += "\n"
 
     ic=1

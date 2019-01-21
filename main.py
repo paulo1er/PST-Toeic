@@ -32,8 +32,10 @@ def main():
     #print("answersEleves : "+str(answersEleves))
     scores=compareAll(answersCorr,answersEleves)
     
+    print("scores : ")
+    for i in scores:
+        print i
     
-    print("scores : "+str(scores))
     
     export(scores)
 
