@@ -29,11 +29,11 @@ def getStats(liste):
                   average(percentages[147:175]),
                   average(percentages[176:200])   ]
     #cumulated = [ 6, 31, 70, 100, 130, 146, 175, 200 ]
-    #print exercisesRes
+    
     nbQuestions = [ 6,25,39,30,30,16,29,25 ]
     for i in range(8):
-        exercisesRes[i]='="'+ str(exercisesRes[i]) + ' / ' + str(nbQuestions[i])+'"'
-       
+        exercisesRes[i]='="'+ str(float(nbQuestions[i]*exercisesRes[i])/100.) + ' / ' + str(nbQuestions[i])+'"'
+    #print exercisesRes  
     res=exercisesRes, percentages
     return res 
 

@@ -35,7 +35,7 @@ def exportClasse(exercisesRes, percentages):
         csv +='Question '+ str(i+1) + ";"
     csv += "\n"
     for i in percentages:
-        csv += str(i) + ";"
+        csv += str(i) + "%;"
     print >>f, csv
     print("Fichier exporte dans moyennes_classe.csv")
     f.close()
