@@ -1,7 +1,7 @@
 from Interface import interface
 from p2j import pdf2image
 from solve import solve
-from export import export
+from export import exportIndiv,exportClasse
 from score import compareAll
 
 
@@ -37,7 +37,9 @@ def main():
         print i
     
     
-    export(scores)
+    exportIndiv(scores[0])
+    exportIndiv(scores[0])
+    exportClasse(scores[1],scores[2])
 
 
 import cProfile
