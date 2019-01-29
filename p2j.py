@@ -8,7 +8,7 @@ def pdf2image(inputPath):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    pages = convert_from_path(inputPath, 300)
+    pages = convert_from_path(inputPath, 500)
 
     i=0
     for page in pages:

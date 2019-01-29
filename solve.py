@@ -26,12 +26,12 @@ def solve(pathJPG, debug = False):
 
     listening = cv.cvtColor(listening_color, cv.COLOR_BGR2GRAY)
     reading = cv.cvtColor(reading_color, cv.COLOR_BGR2GRAY)
-
+    '''
     if debug :
         cv.imshow('listening_color', cv.resize(listening_color, (899 , 636)))
         cv.imshow('reading_color', cv.resize(reading_color, (899 , 636)))
         cv.waitKey(0)
-
+    '''
 
     result = []
 
@@ -64,16 +64,14 @@ def solve(pathJPG, debug = False):
     ret, mask = cv.threshold(mask_img, 170, 255, cv.THRESH_BINARY)
 
     for i in range(0, 100, 1) :
-        print(str(i+1) +"/200")
+        #print(str(i+1) +"/200")
         roi_color = listening[coordonneListening['y1'][i]:coordonneListening['y2'][i], coordonneListening['x1'][i]:coordonneListening['x2'][i]]
 
         ret, thresh = cv.threshold(roi_color, 170, 255, cv.THRESH_BINARY)
 
         img_tresh = cv.bitwise_and(thresh,thresh, mask=mask)
 
-        if debug :
-            cv.imshow('Image', img_tresh)
-            cv.waitKey(0)
+        
 
         jc = 1
         minMean = 255
@@ -88,22 +86,24 @@ def solve(pathJPG, debug = False):
                 minMean = cv.mean(roi)[0]
                 minMeanjc = jc
             jc += 1
-
+            
+        if debug :
+            cv.imshow(str(i+1)+" : "+alphaList[minMeanjc], img_tresh)
+            cv.waitKey(0)
+        
         result.append(alphaList[minMeanjc])
 
     ret, thresh = cv.threshold(reading_color, 170, 255, cv.THRESH_BINARY)
 
     for i in range(0, 100, 1) :
-        print(str(i+101) +"/200")
+        #print(str(i+101) +"/200")
         roi_color = reading[coordonneReanding['y1'][i]:coordonneReanding['y2'][i], coordonneReanding['x1'][i]:coordonneReanding['x2'][i]]
 
         ret, thresh = cv.threshold(roi_color, 170, 255, cv.THRESH_BINARY)
 
         img_tresh = cv.bitwise_and(thresh,thresh, mask=mask)
 
-        if debug :
-            cv.imshow('Image', img_tresh)
-            cv.waitKey(0)
+      
 
         jc = 1
         minMean = 255
@@ -118,7 +118,11 @@ def solve(pathJPG, debug = False):
                 minMean = cv.mean(roi)[0]
                 minMeanjc = jc
             jc += 1
-
+        
+        if debug :
+            cv.imshow(str(i+101)+" : "+alphaList[minMeanjc], img_tresh)
+            cv.waitKey(0)
+       
         result.append(alphaList[minMeanjc])
 
 

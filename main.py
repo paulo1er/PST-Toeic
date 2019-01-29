@@ -16,7 +16,7 @@ def getAnswers(filepath):
     for i in range(n):
         print(i)
         pathJPG = "run/temp/out"+str(i)+".jpg"
-        results.append(solve(pathJPG))
+        results.append(solve(pathJPG,False))
     return results
 
 
@@ -38,7 +38,7 @@ def main():
         print i
     
     
-    exportIndiv(scores[0])
+    
     exportIndiv(scores[0])
     exportClasse(scores[1],scores[2])
 
