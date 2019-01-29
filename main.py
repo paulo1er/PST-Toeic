@@ -3,6 +3,7 @@ from p2j import pdf2image
 from solve import solve
 from export import exportIndiv,exportClasse
 from score import compareAll
+from loading import loading
 
 
 
@@ -14,7 +15,7 @@ def getAnswers(filepath):
     results = []
     for i in range(n):
         print(i)
-        pathJPG = "temp/out"+str(i)+".jpg"
+        pathJPG = "run/temp/out"+str(i)+".jpg"
         results.append(solve(pathJPG))
     return results
 
