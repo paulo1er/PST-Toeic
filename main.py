@@ -42,14 +42,15 @@ def main():
     exportIndiv(scores[0])
     exportClasse(scores[1],scores[2])
 
-
+"""
 import cProfile
  
 pr = cProfile.Profile()
 pr.enable()
- 
+"""
 main()
- 
+""" 
 pr.disable()
  
 pr.print_stats(sort='cumtime')
+"""
