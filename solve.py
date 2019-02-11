@@ -14,7 +14,7 @@ def solve(pathJPG, debug = False):
     img1 = img1[100:width-100, 100:height-100]
     img1 = resize(img1)
 
-    #cv.imshow('Image', cv.resize(img, (899 , 636)))
+    #cv.imshow('Image', cv.resize(img1, (899 , 636)))
     #cv.waitKey(0)
 
     width, height = img1.shape[:2]
@@ -71,7 +71,7 @@ def solve(pathJPG, debug = False):
 
         img_tresh = cv.bitwise_and(thresh,thresh, mask=mask)
 
-        
+
 
         jc = 1
         minMean = 255
@@ -86,11 +86,11 @@ def solve(pathJPG, debug = False):
                 minMean = cv.mean(roi)[0]
                 minMeanjc = jc
             jc += 1
-            
+
         if debug :
             cv.imshow(str(i+1)+" : "+alphaList[minMeanjc], img_tresh)
             cv.waitKey(0)
-        
+
         result.append(alphaList[minMeanjc])
 
     ret, thresh = cv.threshold(reading_color, 170, 255, cv.THRESH_BINARY)
@@ -103,7 +103,7 @@ def solve(pathJPG, debug = False):
 
         img_tresh = cv.bitwise_and(thresh,thresh, mask=mask)
 
-      
+
 
         jc = 1
         minMean = 255
@@ -118,11 +118,11 @@ def solve(pathJPG, debug = False):
                 minMean = cv.mean(roi)[0]
                 minMeanjc = jc
             jc += 1
-        
+
         if debug :
             cv.imshow(str(i+101)+" : "+alphaList[minMeanjc], img_tresh)
             cv.waitKey(0)
-       
+
         result.append(alphaList[minMeanjc])
 
 
@@ -229,20 +229,20 @@ def solve(pathJPG, debug = False):
 
 
 if __name__ == '__main__':
-    
+
     """
     import cProfile
- 
+
     pr = cProfile.Profile()
     pr.enable()
-    """ 
+    """
     result = solve(r'Grille_Toeic-15-1.jpg', True)
-    """ 
+    """
     pr.disable()
-     
+
     pr.print_stats(sort='cumtime')
     """
-    
+
 
 #ic=1
 #for i in result:
