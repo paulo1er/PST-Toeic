@@ -1,18 +1,13 @@
 import cv2 as cv
 import numpy as np
-import math
-from resize import resize
-import pickle
 
 
 
-def solve(pathJPG, debug = False):
 
-    img1 = cv.imread(pathJPG)
+def solve(img1, debug = False):
 
-    width, height = img1.shape[:2]
-    img1 = img1[100:width-100, 100:height-100]
-    img1 = resize(img1)
+    
+    
 
     #cv.imshow('Image', cv.resize(img, (899 , 636)))
     #cv.waitKey(0)

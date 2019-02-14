@@ -3,9 +3,8 @@ from p2j import pdf2image
 from solve import solve
 from export import exportIndiv,exportClasse
 from score import compareAll
-from loading import loading
-
-
+import cv2
+from resize import resize
 
 
 #prend en entée le chemin vers un pdf et donne les réponses ABCD données
@@ -16,7 +15,10 @@ def getAnswers(filepath):
     for i in range(n):
         print(i)
         pathJPG = "run/temp/out"+str(i)+".jpg"
-        results.append(solve(pathJPG,False))
+        img = cv2.imread(pathJPG)
+        img = resize(img)
+        cv2.imwrite(pathJPG, img);
+        results.append(solve(img,False))
     return results
 
 
