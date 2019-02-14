@@ -1,13 +1,13 @@
 
 
-def exportIndiv(results):
+def exportIndiv(results, names):
     f = open("scores_individuels.csv", "w")
     csv = "name;total;listening;reading;Description d'images;Question-Response;Dialogues;Discussions - Annonces;Phrases a completer;Textes a completer;Lecture contenus rediriges,  Passages simples;Lecture contenus rediriges, Passages multiples"
     csv += "\n"
 
     ic=1
     for result in results:
-        csv += "etudiant " + str(ic) + ";"
+        csv += names[ic-1][0]+" "+names[ic-1][1] + ";"
         for i in result:
             csv += str(i) + ";"
         csv += "\n"
@@ -38,7 +38,7 @@ def exportClasse(exercisesRes, percentages):
     f.close()
 
 
-def exportAnswersEleves(answersEleves):
+def exportAnswersEleves(answersEleves, names):
     f = open("answersEleves.csv", "w")
     csv = " ;"
     for i in range(1, 201, 1) :
@@ -47,7 +47,7 @@ def exportAnswersEleves(answersEleves):
 
     ic=1
     for answersEleve in answersEleves:
-        csv += "etudiant " + str(ic) + ";"
+        csv += names[ic-1][0]+" "+names[ic-1][1] + ";"
         for i in answersEleve:
             csv += str(i) + ";"
         csv += "\n"

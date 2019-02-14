@@ -5,7 +5,7 @@ from export import exportIndiv,exportClasse,exportAnswersEleves
 from score import compareAll
 import cv2
 from resize import resize
-
+from name import promptNames
 
 #prend en entee le chemin vers un pdf et donne les reponses ABCD donnees
 def getAnswers(filepath):
@@ -35,16 +35,17 @@ def main():
     #print("answersCorr : "+str(answersCorr))
     #print("answersEleves : "+str(answersEleves))
     scores=compareAll(answersCorr,answersEleves)
-
+    names = promptNames()
+    print(names)
     print("scores : ")
     for i in scores:
-        print i
+        print(i)
 
 
 
-    exportIndiv(scores[0])
+    exportIndiv(scores[0], names)
     exportClasse(scores[1],scores[2])
-    exportAnswersEleves(answersEleves)
+    exportAnswersEleves(answersEleves, names)
 
 """
 import cProfile

@@ -6,9 +6,11 @@ Created on Thu Jan 24 09:48:13 2019
 """
 
 import Tkinter as tk
+import tkMessageBox
 from PIL import Image
 from PIL import ImageTk
 import cv2
+
 
 
  
@@ -83,43 +85,55 @@ def resize_name(n):
 
 
 class ImageCatalogue:
+    def changeName(self,currentFirst, currentLast):
+        self.names[self.i]=(currentFirst, currentLast)
+        
     def update(self):
         self.im = self.images[self.i]
         self.name = self.names[self.i]
-        print(self.names)
+        #print(self.names)
         
     def __init__(self, images):
         self.images = images
         self.n = len(images)
         self.names = [ ("","") for k in range(self.n) ]
         self.i = 0
-     
         self.update()
       
-    def next(self, currentFirst, currentLast):
-        self.names[self.i]=(currentFirst, currentLast)
+    def next(self):
         if self.i < self.n -1:
             self.i+=1
-            self.update()
-            select_image(self.im)
+        self.update()
+        select_image(self.im)
     
-    def prev(self,  currentFirst, currentLast):
-        self.names[self.i]=(currentFirst, currentLast)
+    def prev(self):
         if self.i > 0 :
             self.i-=1
-            self.update()
-            select_image(self.im)
+        self.update()
+        select_image(self.im)
         
 
+def prevImage(cat,valueNom, valuePrenom):
+    cat.changeName(valueNom.get(), valuePrenom.get())
+    cat.prev()
+    valueNom.set(cat.name[0])
+    valuePrenom.set(cat.name[1])
+    
+def nextImage(cat,valueNom, valuePrenom):
+    cat.changeName(valueNom.get(), valuePrenom.get())
+    cat.next()  
+    valueNom.set(cat.name[0])
+    valuePrenom.set(cat.name[1])
 
-    
-    
 
-def init():
-    
-    images = resize_name(7)
-    cat = ImageCatalogue(images)
-    
+def validate(cat, root, valueNom, valuePrenom):
+    if tkMessageBox.askokcancel("Validate", "Are you sure you typed all the names?"):
+        cat.changeName(valueNom.get(), valuePrenom.get())
+        root.destroy()
+
+
+
+def init(cat):
     # initialize the window toolkit along with the two image panels
     root = tk.Tk()
     global panelA
@@ -134,14 +148,23 @@ def init():
     #side="bottom", fill="both", expand="yes", padx="10", pady="10")
     
     
+    
+    btnFinish = tk.Button(root, text="Valider", command= lambda:validate(cat, root, valueNom, valuePrenom ))
+    btnFinish.pack(side="bottom", fill="both", expand="yes", padx="10", pady="10")
+    
+    
+    
     Frame3 = tk.Frame(root, borderwidth=2, relief=tk.GROOVE)
     Frame3.pack(side=tk.BOTTOM, padx=10, pady=10)
-    btn0 = tk.Button(Frame3, text="Précédente", command= lambda:cat.prev(valueNom.get(),valuePrenom.get()))
+    btn0 = tk.Button(Frame3, text="Précédente", command= lambda:prevImage(cat,valueNom, valuePrenom))
     btn0.pack(side="left", fill="both", expand="yes", padx="10", pady="10")
     
     
-    btn = tk.Button(Frame3, text="Suivante", command= lambda:(cat.next(valueNom.get(),valuePrenom.get())))
+    btn = tk.Button(Frame3, text="Suivante", command= lambda:nextImage(cat,valueNom, valuePrenom))
     btn.pack(side="right", fill="both", expand="yes", padx="10", pady="10")
+    
+
+    
     
     
     
@@ -167,12 +190,25 @@ def init():
     entree = tk.Entry(Frame2, textvariable=valuePrenom, width=30)
     entree.pack()
     
+    
     return root
     
-def main():    
-    root = init()
-    root.mainloop()
 
+def on_closing(root):
+    if tkMessageBox.askokcancel("Quit", "Do you want to quit?"):
+        root.destroy()
+        exit(0)
+        
+
+
+def promptNames():    
+    images = resize_name(7)
+    cat = ImageCatalogue(images)
+    root = init(cat)
+    root.protocol("WM_DELETE_WINDOW", lambda:on_closing(root))
+    root.mainloop()
+    #print(cat.names)
+    return cat.names
 
 if __name__ == '__main__':
     """import cProfile
@@ -180,7 +216,7 @@ if __name__ == '__main__':
     pr = cProfile.Profile()
     pr.enable()
     """
-    main()
+    promptNames()
     """
     pr.disable()
      

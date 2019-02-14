@@ -33,7 +33,7 @@ def openCopies():
 
 def run():
     if fileCorrige.get() != 'None' and fileCopies.get() != 'None':
-        fenetre.quit()
+        fenetre.destroy()
 
 
 Button(fenetre, text ='pdf du corrige', command=openCorrige).grid(row=1, column=1)
