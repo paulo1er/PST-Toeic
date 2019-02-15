@@ -10,7 +10,7 @@ import tkMessageBox
 from PIL import Image
 from PIL import ImageTk
 import cv2
-
+import sys
 
 
  
@@ -197,12 +197,12 @@ def init(cat):
 def on_closing(root):
     if tkMessageBox.askokcancel("Quit", "Do you want to quit?"):
         root.destroy()
-        exit(0)
+        sys.exit(0)
         
 
 
-def promptNames():    
-    images = resize_name(7)
+def promptNames(n):    
+    images = resize_name(n)
     cat = ImageCatalogue(images)
     root = init(cat)
     root.protocol("WM_DELETE_WINDOW", lambda:on_closing(root))
@@ -216,7 +216,7 @@ if __name__ == '__main__':
     pr = cProfile.Profile()
     pr.enable()
     """
-    promptNames()
+    promptNames(7)
     """
     pr.disable()
      

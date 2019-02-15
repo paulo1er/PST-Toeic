@@ -41,7 +41,7 @@ l1 = Label(fenetre, textvariable =fileCorrige)
 l1.grid(row=1, column=2)
 Button(fenetre, text ='pdf des copies', command=openCopies).grid(row=2, column=1)
 l2 = Label(fenetre, textvariable =fileCopies)
-l2.grid(row=1, column=2)
+l2.grid(row=2, column=2)
 Button(fenetre, text ='run', command=run).grid(row=3, column=1)
 l3 = Label(fenetre, textvariable =progress)
 l3.grid(row=3, column=2)
@@ -50,11 +50,9 @@ def interface1():
     fenetre.mainloop()
     return(fileCorrige.get(),fileCopies.get())
 
-def interface2():
-    fenetre.mainloop()
-    return(fileCorrige.get(),fileCopies.get())
+
 
 
 if __name__ == '__main__':
-    a=interface("test")
+    a=interface1()
     print(a)

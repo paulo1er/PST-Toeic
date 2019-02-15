@@ -35,7 +35,7 @@ def main():
     #print("answersCorr : "+str(answersCorr))
     #print("answersEleves : "+str(answersEleves))
     scores=compareAll(answersCorr,answersEleves)
-    names = promptNames()
+    names = promptNames(len(answersEleves))
     print(names)
     print("scores : ")
     for i in scores:

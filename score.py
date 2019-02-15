@@ -119,5 +119,5 @@ if __name__ == '__main__':
     #print(test [1])
     #print(test [2])
     from export import exportIndiv, exportClasse
-    exportIndiv(test[0])
+    exportIndiv(test[0], [("",""),("",""),("",""),("",""),("",""),("",""),("","")])
     exportClasse(test[1],test[2])
