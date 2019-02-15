@@ -1,7 +1,7 @@
 from Interface import interface1
 from p2j import pdf2image
 from solve import solve
-from export import exportIndiv,exportClasse,exportAnswersEleves
+import export
 from score import compareAll
 import cv2
 from resize import resize
@@ -43,9 +43,9 @@ def main():
 
 
 
-    exportIndiv(scores[0], names)
-    exportClasse(scores[1],scores[2])
-    exportAnswersEleves(answersEleves, names)
+    export.exportIndiv(scores[0], names)
+    export.exportClasse(scores[1],scores[2])
+    export.exportAnswersEleves(answersEleves, names)
 
 """
 import cProfile

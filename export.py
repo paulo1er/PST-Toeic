@@ -2,12 +2,12 @@
 
 def exportIndiv(results, names):
     f = open("scores_individuels.csv", "w")
-    csv = "name;total;listening;reading;Description d'images;Question-Response;Dialogues;Discussions - Annonces;Phrases a completer;Textes a completer;Lecture contenus rediriges,  Passages simples;Lecture contenus rediriges, Passages multiples"
+    csv = "Nom;Total;Listening;Reading;Description d'images;Question-Response;Dialogues;Discussions - Annonces;Phrases a completer;Textes a completer;Lecture contenus rediriges,  Passages simples;Lecture contenus rediriges, Passages multiples"
     csv += "\n"
 
     ic=1
     for result in results:
-        csv += names[ic-1][0]+" "+names[ic-1][1] + ";"
+        csv += names[ic-1] + ";"
         for i in result:
             csv += str(i) + ";"
         csv += "\n"
@@ -136,7 +136,7 @@ def exportClasse(exercisesRes, percentages):
 
 
 def exportAnswersEleves(answersEleves, names):
-    f = open("answersEleves.csv", "w")
+    f = open("reponses_eleves.csv", "w")
     csv = " ;"
     for i in range(1, 201, 1) :
         csv += str(i) + ";"
@@ -144,11 +144,11 @@ def exportAnswersEleves(answersEleves, names):
 
     ic=1
     for answersEleve in answersEleves:
-        csv += names[ic-1][0]+" "+names[ic-1][1] + ";"
+        csv += names[ic-1] + ";"
         for i in answersEleve:
             csv += str(i) + ";"
         csv += "\n"
         ic += 1
     print >>f, csv
-    print("Fichier exporte dans answersEleves.csv")
+    print("Fichier exporte dans reponses_eleves.csv")
     f.close()

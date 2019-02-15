@@ -64,11 +64,11 @@ def compare2(correction,answers):
     listeningNb=0
     readingNb=0
     
-    listeningParts = [ ["Description d'images",6] , ['Question-Response',25] , ['Dialogues',39] , ['Discussions - Annonces',30] ]
-    readingParts = [ ['Phrases à compléter',30] , ['Textes à compléter',16] , ['Lecture contenus redirigés,  Passages simples',29],['Lecture contenus redirigés, Passages multiples', 25] ]
+    #listeningParts = [ ["Description d'images",6] , ['Question-Response',25] , ['Dialogues',39] , ['Discussions - Annonces',30] ]
+    #readingParts = [ ['Phrases à compléter',30] , ['Textes à compléter',16] , ['Lecture contenus redirigés,  Passages simples',29],['Lecture contenus redirigés, Passages multiples', 25] ]
 
     nbQuestions = [ 6,25,39,30,30,16,29,25 ]
-    cumulated = [ 6, 31, 70, 100, 130, 146, 175, 200 ]
+    #cumulated = [ 6, 31, 70, 100, 130, 146, 175, 200 ]
 	
     trueFalseList=[0 for i in range(200)]
     
@@ -119,5 +119,5 @@ if __name__ == '__main__':
     #print(test [1])
     #print(test [2])
     from export import exportIndiv, exportClasse
-    exportIndiv(test[0], [("",""),("",""),("",""),("",""),("",""),("",""),("","")])
+    exportIndiv(test[0], [("tata"),("toto"),("titi"),("tutu"),("tonton"),("tété"),("tyty")])
     exportClasse(test[1],test[2])
