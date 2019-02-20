@@ -11,8 +11,8 @@ from PIL import Image
 from PIL import ImageTk
 import cv2
 import sys
-
-
+from tkinter_autocomplete import AutocompleteEntry
+import os
  
 def select_image(im):
 
@@ -33,20 +33,13 @@ def select_image(im):
         # the first panel will store our original image
         panelA = tk.Label(image=im)
         panelA.image = im
-        panelA.pack( padx=10, pady=10)
+        panelA.pack()
  
     # otherwise, update the image panels
     else:
         # update the pannels
         panelA.configure(image=im)
         panelA.image = im
-
-
-
-
-
-
-
 
 
 
@@ -92,7 +85,8 @@ class ImageCatalogue:
         self.name = self.names[self.i]
         #print(self.names)
         
-    def __init__(self, images):
+    def __init__(self, images, scores):
+        self.scores = scores
         self.images = images
         self.n = len(images)
         self.names = [ "" for k in range(self.n) ]
@@ -111,30 +105,35 @@ class ImageCatalogue:
         self.update()
         select_image(self.im)
         
+    def getScore(self):
+        return self.scores[self.i][0]
+        
 
-def prevImage(cat,valueName, strNumber):
+def prevImage(cat,valueName, strNumber, strScore):
     cat.changeName(valueName.get())
     cat.prev()
     valueName.set(cat.name)
     strNumber.set(str(cat.i+1) + " / "+str(cat.n))
+    strScore.set("Score : " + str(cat.getScore()))
     
     
-def nextImage(cat,valueName, strNumber):
+def nextImage(cat,valueName, strNumber, strScore):
     cat.changeName(valueName.get())
     cat.next()  
     valueName.set(cat.name)
     strNumber.set(str(cat.i+1) + " / "+str(cat.n))
+    strScore.set("Score : " + str(cat.getScore()))
 
 
 def validate(cat, root, valueName):
     cat.changeName(valueName.get())
     dupl=findDuplicates(cat.names)
     if "" in cat.names :
-        message="Il manque un nom en position "+ str(1 + cat.names.index("")) +", continuer quand-même ?"
+        message="Il manque un nom en position "+ str(1 + cat.names.index("")) +", continuer quand même ?"
         if tkMessageBox.askokcancel("Valider", message):
             root.destroy()
     elif dupl:
-        message="Le nom "+ str(dupl) +" est en double, continuer quand-même ?"
+        message="Le nom "+ str(dupl) +" est en double, continuer quand même ?"
         if tkMessageBox.askokcancel("Valider", message):
             root.destroy()
     else:
@@ -162,42 +161,66 @@ def init(cat):
     
     select_image(cat.im)
     
-    
-    
-    #Bouton valider
-    btnFinish = tk.Button(root, text="Valider", command= lambda:validate(cat, root, valueName ))
-    btnFinish.pack(side="bottom", fill="both", expand="yes", padx="10", pady="10")
-    
-    
-    
-    # Images suivantes et precedentes
-    Frame3 = tk.Frame(root, borderwidth=2, relief=tk.GROOVE)
-    Frame3.pack(side=tk.BOTTOM, padx=10, pady=10)
-    btn0 = tk.Button(Frame3, text="Précédent", command= lambda:prevImage(cat,valueName, strNumber))
-    btn0.pack(side="left", fill="both", expand="yes", padx="10", pady="10")
-    
-    btn = tk.Button(Frame3, text="Suivant", command= lambda:nextImage(cat,valueName, strNumber))
-    btn.pack(side="right", fill="both", expand="yes", padx="10", pady="10")
-    
 
-    
-    # Nom et prénom
-    Frame1 = tk.Frame(root, borderwidth=2, relief=tk.GROOVE)
-    Frame1.pack( padx=30, pady=30)
-    labelName = tk.Label(Frame1, text="Nom, prénom")
-    labelName.pack()
-    # entrée
-    valueName = tk.StringVar() 
-    entree = tk.Entry(Frame1, textvariable=valueName, width=60)
-    entree.pack()
-    
+      # Images precedentes, compteur et suivantes
+    frame3 = tk.Frame(root, relief=tk.GROOVE)
+    frame3.pack(side=tk.TOP, padx=10, pady=10)
+    btn0 = tk.Button(frame3, text="Précédent", width=20, height=1,  command= lambda:prevImage(cat,valueName, strNumber, strScore))
+    btn0.grid(row=1, column=1, padx=10)
     
     strNumber = tk.StringVar() 
     strNumber.set("1 / "+ str(cat.n))
-    labelNumber = tk.Label(Frame1, textvariable =strNumber)
-    labelNumber.pack()
+    labelNumber = tk.Label(frame3, textvariable =strNumber)
+    labelNumber.grid(row=1, column=2, padx=5, pady=6)
     
+    btn = tk.Button(frame3, text="Suivant", width=20, height=1, command= lambda:nextImage(cat,valueName, strNumber, strScore))
+    btn.grid(row=1, column=3, padx=10)
+    
+    
+    #Affichage du score
+    strScore = tk.StringVar() 
+    strScore.set("Score : " + str(cat.getScore()))
+    labelScore = tk.Label(root, textvariable =strScore)
+    labelScore.pack( padx="10", pady="8")
+    
+    
+    #Bouton valider
+    btnFinish = tk.Button(root, text="Valider", width=30, height=1, command= lambda:validate(cat, root, valueName ))
+    btnFinish.pack(side="bottom",  padx="10", pady="18")
+    
+    
+    
+    # Nom et prénom
+    Frame1 = tk.Frame(root, borderwidth=0, relief=tk.GROOVE)
+    Frame1.pack( padx=30, pady=5)
+    labelName = tk.Label(Frame1, text="Nom Prénom")
+    labelName.pack(pady="5")
 
+    isAutocomplete = False
+    fName = "noms.txt"
+    if os.path.exists(fName):
+       with open(fName, 'rb') as entriesFile:
+           try:
+               # entrée avec autocomplete
+               ENTRIES = entriesFile.read().split('\n')
+               frameEntree = tk.Frame(Frame1)
+               frameEntree.pack()   
+               entree = AutocompleteEntry(frameEntree)
+               valueName = entree.text
+               entree.build(ENTRIES, no_results_message=None, max_entries=5)
+               entree.pack(pady="1")
+               isAutocomplete = True
+               
+           except : # entrée sans autocomplete
+               print "erreur de l'importation du fichier noms.txt" 
+               
+    if not isAutocomplete:
+       valueName = tk.StringVar() 
+       entree = tk.Entry(Frame1, textvariable=valueName, width=60)
+       entree.pack(pady="3") 
+    
+ 
+    
     return root
     
 
@@ -206,15 +229,16 @@ def init(cat):
 def on_closing(root):
     if tkMessageBox.askokcancel("Quitter", "Voulez-vous quitter ?"):
         root.destroy()
-        sys.exit(0)
+        sys.exit("closed window")
         
 
 
 
 # main
-def promptNames(n):    
+def promptNames(scores):    
+    n=len(scores)
     images = resize_name(n)
-    cat = ImageCatalogue(images)
+    cat = ImageCatalogue(images, scores)
     root = init(cat)
     root.protocol("WM_DELETE_WINDOW", lambda:on_closing(root))
     root.mainloop()
@@ -229,7 +253,7 @@ if __name__ == '__main__':
     pr = cProfile.Profile()
     pr.enable()
     """
-    promptNames(7)
+    promptNames([[310, 190, 120, '="4 / 6"', '="7 / 25"', '="20 / 39"', '="13 / 30"', '="10 / 30"', '="5 / 16"', '="17 / 29"', '="8 / 25"'], [780, 150, 130, '="3 / 6"', '="8 / 25"', '="19 / 39"', '="9 / 30"', '="14 / 30"', '="4 / 16"', '="18 / 29"', '="6 / 25"'], [330, 205, 125, '="3 / 6"', '="3 / 25"', '="25 / 39"', '="15 / 30"', '="10 / 30"', '="2 / 16"', '="18 / 29"', '="11 / 25"'], [255, 170, 85, '="2 / 6"', '="8 / 25"', '="19 / 39"', '="12 / 30"', '="5 / 30"', '="4 / 16"', '="17 / 29"', '="9 / 25"'], [275, 170, 105, '="0 / 6"', '="7 / 25"', '="20 / 39"', '="14 / 30"', '="9 / 30"', '="6 / 16"', '="13 / 29"', '="10 / 25"'], [345, 225, 120, '="3 / 6"', '="7 / 25"', '="24 / 39"', '="15 / 30"', '="9 / 30"', '="4 / 16"', '="20 / 29"', '="7 / 25"'], [845, 440, 405, '="1 / 6"', '="20 / 25"', '="35 / 39"', '="27 / 30"', '="29 / 30"', '="15 / 16"', '="22 / 29"', '="20 / 25"']])
     """
     pr.disable()
      

@@ -7,6 +7,7 @@ import cv2
 from resize import resize
 from name import promptNames
 
+
 #prend en entee le chemin vers un pdf et donne les reponses ABCD donnees
 def getAnswers(filepath):
     n = pdf2image(filepath)
@@ -35,7 +36,7 @@ def main():
     #print("answersCorr : "+str(answersCorr))
     #print("answersEleves : "+str(answersEleves))
     scores=compareAll(answersCorr,answersEleves)
-    names = promptNames(len(answersEleves))
+    names = promptNames(scores[0])
     print(names)
     print("scores : ")
     for i in scores:
