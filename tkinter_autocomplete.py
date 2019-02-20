@@ -94,8 +94,8 @@ class AutocompleteEntry(tk.Frame, object):
         Returns:
         None
         """
-        if not case_sensitive:
-            entries = [entry.lower() for entry in entries]
+        
+        entries = [entry.strip() for entry in entries]
 
         self._case_sensitive = case_sensitive
         self._entries = entries
@@ -125,8 +125,12 @@ class AutocompleteEntry(tk.Frame, object):
             self.listbox.grid_forget()
         else:
             for entry in self._entries:
-                if text in entry.strip():
-                    self.listbox.insert(tk.END, entry)
+                if not self._case_sensitive:
+                    if text in entry.lower().strip():
+                        self.listbox.insert(tk.END, entry)
+                else:
+                    if text in entry.strip():
+                        self.listbox.insert(tk.END, entry)
 
         listbox_size = self.listbox.size()
         if not listbox_size:

@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 
 def exportIndiv(results, names):
     f = open("scores_individuels.csv", "w")

@@ -109,20 +109,25 @@ class ImageCatalogue:
         return self.scores[self.i][0]
         
 
-def prevImage(cat,valueName, strNumber, strScore):
+def prevImage(cat,valueName, strNumber, strScore, entree):
     cat.changeName(valueName.get())
     cat.prev()
     valueName.set(cat.name)
     strNumber.set(str(cat.i+1) + " / "+str(cat.n))
     strScore.set("Score : " + str(cat.getScore()))
+    entree._update_autocomplete(None)
+    entree.entry.focus()
     
     
-def nextImage(cat,valueName, strNumber, strScore):
+    
+def nextImage(cat,valueName, strNumber, strScore, entree):
     cat.changeName(valueName.get())
     cat.next()  
     valueName.set(cat.name)
     strNumber.set(str(cat.i+1) + " / "+str(cat.n))
     strScore.set("Score : " + str(cat.getScore()))
+    entree._update_autocomplete(None)
+    entree.entry.focus()
 
 
 def validate(cat, root, valueName):
@@ -165,17 +170,18 @@ def init(cat):
       # Images precedentes, compteur et suivantes
     frame3 = tk.Frame(root, relief=tk.GROOVE)
     frame3.pack(side=tk.TOP, padx=10, pady=10)
-    btn0 = tk.Button(frame3, text="Précédent", width=20, height=1,  command= lambda:prevImage(cat,valueName, strNumber, strScore))
-    btn0.grid(row=1, column=1, padx=10)
+    btnPrec = tk.Button(frame3, text="Précédent", width=20, height=1, command=lambda:prevImage(cat,valueName, strNumber, strScore, entree))
+    btnPrec.grid(row=1, column=1, padx=10)
     
     strNumber = tk.StringVar() 
     strNumber.set("1 / "+ str(cat.n))
     labelNumber = tk.Label(frame3, textvariable =strNumber)
     labelNumber.grid(row=1, column=2, padx=5, pady=6)
     
-    btn = tk.Button(frame3, text="Suivant", width=20, height=1, command= lambda:nextImage(cat,valueName, strNumber, strScore))
-    btn.grid(row=1, column=3, padx=10)
+    btnSuiv = tk.Button(frame3, text="Suivant", width=20, height=1, command=lambda:nextImage(cat,valueName, strNumber, strScore, entree))
+    btnSuiv.grid(row=1, column=3, padx=10)
     
+   
     
     #Affichage du score
     strScore = tk.StringVar() 
@@ -202,18 +208,21 @@ def init(cat):
        with open(fName, 'rb') as entriesFile:
            try:
                # entrée avec autocomplete
-               ENTRIES = entriesFile.read().split('\n')
+               entries = entriesFile.read().split('\n')
+               entries.sort()
+               
                frameEntree = tk.Frame(Frame1)
                frameEntree.pack()   
                entree = AutocompleteEntry(frameEntree)
                valueName = entree.text
-               entree.build(ENTRIES, no_results_message=None, max_entries=5)
+               entree.build(entries, no_results_message=None, max_entries=5)
                entree.pack(pady="1")
+    
+               
                isAutocomplete = True
-               
-           except : # entrée sans autocomplete
+           except : 
                print "erreur de l'importation du fichier noms.txt" 
-               
+    # entrée sans autocomplete
     if not isAutocomplete:
        valueName = tk.StringVar() 
        entree = tk.Entry(Frame1, textvariable=valueName, width=60)
@@ -242,7 +251,7 @@ def promptNames(scores):
     root = init(cat)
     root.protocol("WM_DELETE_WINDOW", lambda:on_closing(root))
     root.mainloop()
-    #print(cat.names)
+    print(cat.names)
     return cat.names
 
 

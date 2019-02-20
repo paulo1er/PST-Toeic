@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Interface import interface1
 from p2j import pdf2image
 from solve import solve
