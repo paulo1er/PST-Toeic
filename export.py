@@ -12,6 +12,7 @@ def exportIndiv(results, names):
             csv += str(i) + ";"
         csv += "\n"
         ic += 1
+    csv = csv.encode('utf-8');
     print >>f, csv
     print("Fichier exporte dans scores_individuels.csv")
     f.close()
@@ -38,98 +39,99 @@ def exportClasse(exercisesRes, percentages):
     csv += "\n"
     csv += str(exercisesRes[0])
     csv += "\n\n\n"
-    
-    
+
+
     csv += "moyenne listening"
     csv += "\n"
     csv += str(exercisesRes[1])
     csv += "\n\n"
-    
-    
+
+
     csv += "Description d'images"
     csv += "\n"
     csv += str(exercisesRes[3])
     csv += "\n"
-    
+
     csv += questionsEntre(0,6, percentages)
     csv += "\n\n"
-    
-    
+
+
     csv += "Question-Response"
     csv += "\n"
     csv += str(exercisesRes[4])
     csv += "\n"
-    
+
     csv += questionsEntre(6,31, percentages)
     csv += "\n\n"
-    
-    
+
+
     csv += "Dialogues"
     csv += "\n"
     csv += str(exercisesRes[5])
     csv += "\n"
-    
+
     csv += questionsEntre(31,70, percentages)
     csv += "\n\n"
-    
-    
+
+
     csv += "Discussions - Annonces"
     csv += "\n"
     csv += str(exercisesRes[6])
     csv += "\n"
-    
+
     csv += questionsEntre(70,100, percentages)
     csv += "\n\n"
-    
-    
-    csv += "\n\n"
-    
-       
 
-    
+
+    csv += "\n\n"
+
+
+
+
     csv += "moyenne reading"
     csv += "\n"
     csv += str(exercisesRes[2])
     csv += "\n\n"
-    
-    
+
+
     csv += "Phrases a completer"
     csv += "\n"
     csv += str(exercisesRes[7])
     csv += "\n"
-    
+
     csv += questionsEntre(100,130, percentages)
     csv += "\n\n"
-    
-    
+
+
     csv += "Textes a completer"
     csv += "\n"
     csv += str(exercisesRes[8])
     csv += "\n"
-    
+
     csv += questionsEntre(130,146, percentages)
     csv += "\n\n"
-    
-    
-    
+
+
+
     csv += "Lecture contenus rediriges,  Passages simples"
     csv += "\n"
     csv += str(exercisesRes[9])
     csv += "\n"
-    
+
     csv += questionsEntre(146,175, percentages)
     csv += "\n\n"
-    
-    
+
+
     csv += "Lecture contenus rediriges,  Passages multiples"
     csv += "\n"
     csv += str(exercisesRes[10])
     csv += "\n"
-    
+
     csv += questionsEntre(175,200, percentages)
     csv += "\n\n"
-    
-    
+
+
+    csv = csv.encode('utf-8');
     print >>f, csv
     print("Fichier exporte dans moyennes_classe.csv")
     f.close()
@@ -149,6 +151,7 @@ def exportAnswersEleves(answersEleves, names):
             csv += str(i) + ";"
         csv += "\n"
         ic += 1
+    csv = csv.encode('utf-8');
     print >>f, csv
     print("Fichier exporte dans reponses_eleves.csv")
     f.close()
