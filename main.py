@@ -20,7 +20,7 @@ def getAnswers(filepath):
         img = cv2.imread(pathJPG)
         img = resize(img)
         cv2.imwrite(pathJPG, img);
-        results.append(solve(img,False))
+        results.append(solve(img))
     return results
 
 
