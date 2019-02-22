@@ -24,9 +24,7 @@ def solve(img1, debug = False):
 
     if debug :
         cv.imshow('listening_color', cv.resize(listening_color, (899 , 636)))
-        cv.imwrite("run/listening_color.jpg", listening_color);
         cv.imshow('reading_color', cv.resize(reading_color, (899 , 636)))
-        cv.imwrite("run/reading_color.jpg", reading_color);
         cv.waitKey(0)
 
     result = []
@@ -71,21 +69,25 @@ def solve(img1, debug = False):
 
 
         jc = 1
-        minMean = 255
         minMeanjc = 0
+        minMean = 255
+        doubleReponse = False
         for j in circles:
             width2 = [int(j[0] - rayon), int(j[0] + rayon)]
             height2 = [int(j[1] - rayon), int(j[1] + rayon)]
 
             roi = img_tresh[height2[0]:height2[1], width2[0]:width2[1]]
 
-            if (minMean > cv.mean(roi)[0]) and (cv.mean(roi)[0] != 0):
-                minMean = cv.mean(roi)[0]
-                minMeanjc = jc
+            if (cv.mean(roi)[0] < 115) and (not doubleReponse):
+                if(minMeanjc != 0):
+                    minMeanjc = 0
+                    doubleReponse = True
+                else:
+                    minMean = cv.mean(roi)[0]
+                    minMeanjc = jc
             jc += 1
 
         if debug :
-            cv.circle(img_tresh, (circles[minMeanjc-1][0], circles[minMeanjc-1][1]), rayon, (0, 0, 255), 5)
             cv.imshow("img", img_tresh)
             cv.waitKey(0)
 
@@ -104,125 +106,30 @@ def solve(img1, debug = False):
 
 
         jc = 1
-        minMean = 255
         minMeanjc = 0
+        minMean = 255
+        doubleReponse = False
         for j in circles:
             width2 = [int(j[0] - rayon), int(j[0] + rayon)]
             height2 = [int(j[1] - rayon), int(j[1] + rayon)]
 
             roi = img_tresh[height2[0]:height2[1], width2[0]:width2[1]]
 
-            if (minMean > cv.mean(roi)[0]) and (cv.mean(roi)[0] != 0):
-                minMean = cv.mean(roi)[0]
-                minMeanjc = jc
+            if (cv.mean(roi)[0] < 115) and (not doubleReponse):
+                if(minMeanjc != 0):
+                    minMeanjc = 0
+                    doubleReponse = True
+                else:
+                    minMean = cv.mean(roi)[0]
+                    minMeanjc = jc
             jc += 1
 
         if debug :
-            cv.circle(img_tresh, (circles[minMeanjc-1][0], circles[minMeanjc-1][1]), rayon, (0, 0, 255), 5)
             cv.imshow("img", img_tresh)
             cv.waitKey(0)
 
         result.append(alphaList[minMeanjc])
 
-
-
-    if False : '''
-    # listening
-    ret, thresh = cv.threshold(listening_color, 170, 255, cv.THRESH_BINARY)
-
-    for i in range(1, 101, 1) :
-        print(str(i) +"/200")
-        width, height = thresh.shape[:2]
-
-        path = 'Mask/mask'+str(i)+".pckl"
-        f = open(path, 'rb')
-        const = pickle.load(f)
-        f.close()
-        mask = const["mask"]
-        circles = const["circles"]
-        img_tresh = cv.bitwise_and(thresh,thresh, mask=mask)
-
-        jc = 1
-        minMean = 255
-        minMeanjc = 0
-        for j in circles[0, :]:
-            cv.circle(listening_color, (j[0], j[1]), 42, (0, 255, 0), 15)
-
-            width2 = [int(j[0] - 42), int(j[0] + 42)]
-            height2 = [int(j[1] - 42), int(j[1] + 42)]
-
-            #if width2[0] < 0: width2[0] = 0
-            #if width2[1] > width: width2[1] = width
-            #if height2[0] < 0: height2[0] = 0
-            #if height2[1] > height: height2[1] = height
-
-            roi = img_tresh[height2[0]:height2[1], width2[0]:width2[1]]
-
-            if (minMean > cv.mean(roi)[0]) and (cv.mean(roi)[0] != 0):
-                minMean = cv.mean(roi)[0]
-                minMeanjc = jc
-            jc += 1
-        #cv.waitKey(0)
-
-        result.append(alphaList[minMeanjc])
-
-
-        if minMeanjc != 0:
-            tempJ = circles[0, :][minMeanjc-1]
-            cv.circle(listening_color, (tempJ[0], tempJ[1]), 42, (0, 0, 255), 15)
-
-    if debug :
-        cv.imshow('Image', cv.resize(listening_color, (899 , 636)))
-        cv.waitKey(0)
-
-    # reading
-    ret, thresh = cv.threshold(reading_color, 170, 255, cv.THRESH_BINARY)
-
-    for i in range(101, 201, 1) :
-        print(str(i) +"/200")
-        width, height = thresh.shape[:2]
-
-        path = 'Mask/mask'+str(i)+".pckl"
-        f = open(path, 'rb')
-        const = pickle.load(f)
-        f.close()
-        mask = const["mask"]
-        circles = const["circles"]
-        img_tresh = cv.bitwise_and(thresh,thresh, mask=mask)
-
-        jc = 1
-        minMean = 255
-        minMeanjc = 0
-        for j in circles[0, :]:
-            cv.circle(reading_color, (j[0], j[1]), 42, (0, 255, 0), 15)
-
-            width2 = [int(j[0] - 42), int(j[0] + 42)]
-            height2 = [int(j[1] - 42), int(j[1] + 42)]
-
-            #if width2[0] < 0: width2[0] = 0
-            #if width2[1] > width: width2[1] = width
-            #if height2[0] < 0: height2[0] = 0
-            #if height2[1] > height: height2[1] = height
-
-            roi = img_tresh[height2[0]:height2[1], width2[0]:width2[1]]
-
-            if (minMean > cv.mean(roi)[0]) and (cv.mean(roi)[0] != 0):
-                minMean = cv.mean(roi)[0]
-                minMeanjc = jc
-            jc += 1
-        #cv.waitKey(0)
-
-        result.append(alphaList[minMeanjc])
-
-
-        if minMeanjc != 0:
-            tempJ = circles[0, :][minMeanjc-1]
-            cv.circle(reading_color, (tempJ[0], tempJ[1]), 42, (0, 0, 255), 15)
-
-    if debug :
-        cv.imshow('Image', cv.resize(reading_color, (899 , 636)))
-        cv.waitKey(0)
-    '''
     print(result)
     return result
 
