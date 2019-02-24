@@ -6,12 +6,12 @@ import sys
 
 
 
-def openFile(string):
+def openFile(string, types=[('pdf files', '.pdf')]):
     #pour cacher l'autre root
     #root = Tkinter.Tk()
     #root.withdraw()
 
-    filepath = tkFileDialog.askopenfilename(title=string,filetypes=[('pdf files', '.pdf')])
+    filepath = tkFileDialog.askopenfilename(title=string,filetypes=types)
     return(filepath)
 
 
@@ -22,7 +22,10 @@ def openCorrige():
         fileCorrige=temp
     strCorrige.set(fileCorrige.split('/')[-1])
     root.update_idletasks()
-    
+    if fileCorrige != "" and fileCopies != "":
+        buttonValidate.config(state=tk.NORMAL)
+    else:
+        buttonValidate.config(state=tk.DISABLED)
 
 def openCopies():
     global fileCopies
@@ -31,7 +34,20 @@ def openCopies():
         fileCopies=temp
     strCopies.set(fileCopies.split('/')[-1])
     root.update_idletasks()
+    if fileCorrige != "" and fileCopies != "":
+        buttonValidate.config(state=tk.NORMAL)
+    else:
+        buttonValidate.config(state=tk.DISABLED)
+        
+        
     
+def openEleves():
+    global fileEleves
+    temp = openFile('Liste des élèves', [('text files', '.txt')])
+    if temp != "":
+        fileEleves=temp
+    strEleves.set(fileEleves.split('/')[-1])
+    root.update_idletasks()
     
     
 
@@ -53,6 +69,7 @@ root = tk.Tk()
 #root.configure(background='white')
 root.title('Choix des pdf')
 root.minsize(300,10)
+root.iconbitmap("dev\logo.ico")
 
 
 imageEx = tk.PhotoImage(file = 'Dev/IMTLD_RVB_Baseline.gif')
@@ -72,6 +89,10 @@ fileCopies = ""
 strCopies= tk.StringVar()
 strCopies.set('Aucun')
 
+fileEleves = "noms.txt"
+strEleves= tk.StringVar()
+strEleves.set('Aucun')
+
 progress = tk.StringVar()
 progress.set('0%')
 
@@ -82,16 +103,20 @@ l1.grid(row=2, column=2, sticky='W', padx=10)
 tk.Button(root, text ='Pdf des copies', width=20, height=1, command=openCopies).grid(row=3, column=1, padx=5, pady=5)
 l2 = tk.Label(root, textvariable =strCopies)
 l2.grid(row=3, column=2, sticky='W', padx=10)
+tk.Button(root, text ='Liste des élèves (optionnel)', width=20, height=1, command=openEleves).grid(row=4, column=1, padx=5, pady=5)
+l3 = tk.Label(root, textvariable =strEleves)
+l3.grid(row=4, column=2, sticky='W', padx=10)
 
 
-tk.Button(root, text ='Valider', width=20, height=1 , command=validate).grid(row=4, column=1, columnspan=2, padx=5, pady=5)
-
+buttonValidate = tk.Button(root, text ='Valider', width=20, height=1, command=validate)
+buttonValidate.grid(row=5, column=1, columnspan=3, padx=5, pady=5)
+buttonValidate.config(state=tk.DISABLED) 
 
 
 def interface1():
     root.protocol("WM_DELETE_WINDOW", lambda:on_closing(root))
     root.mainloop()
-    return(fileCorrige,fileCopies)
+    return(fileCorrige,fileCopies, fileEleves)
 
 
 

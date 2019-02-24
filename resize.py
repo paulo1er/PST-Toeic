@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 import cv2 as cv
 import numpy as np
 import math
-
+from PIL import Image, ImageStat
 
 def distaucarre(point, org=(0, 0)):
     return (math.pow(point[0] - org[0], 2) + math.pow(point[1] - org[1], 2))
@@ -91,23 +92,51 @@ def resize(img):
     M = cv.getPerspectiveTransform(pts1, pts2)
     img=cv.warpPerspective(img, M, (height, width))
 
+        
+    #si elle est tournée à 90 degrés 
+    while isUpsideDown(img):
+        pil_im = Image.fromarray(img)
+        pil_im=pil_im.transpose(Image.ROTATE_90)
+        img = np.array(pil_im) 
+        # Convert RGB to BGR 
+        img = img[:, :, ::-1].copy() 
+        
     return img
 
+
+
+def isUpsideDown(img):
+    width, height = img.shape[:2]
+    y=int(height*0.08)
+    x=int(width*0.2)
+    h=int(height*0.05)
+    w=int(width*0.2)
+    sub_image = img[y:y+h, x:x+w]
+
+    #cv.imshow('aaaaa', sub_image)
+    #cv.waitKey(0)
+    return brightness(sub_image) < 240
+
+
+def brightness( cv_im ):
+   cv_im = cv.cvtColor(cv_im,cv.COLOR_BGR2RGB)
+   pil_im = Image.fromarray(cv_im)
+   stat = ImageStat.Stat(pil_im)
+   return stat.mean[0]
 
 
 
 def main():
     pathJPG=r'Grille_Toeic-15-1.jpg'
     img1 = cv.imread(pathJPG)
-
     img1 = resize(img1)
 
     width = 970
     height = 620
-    img1 = cv.resize(img1, (width, height))
-    cv.imshow('resized', img1)
+    resized = cv.resize(img1, (width, height))
+    cv.imshow('resized', resized)
     cv.waitKey(0)
-
+    
     return 0
 
 

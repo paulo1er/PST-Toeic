@@ -91,15 +91,25 @@ class ImageCatalogue:
         self.n = len(images)
         self.names = [ "" for k in range(self.n) ]
         self.i = 0
+        self.btnPrec = None
+        self.btnSuiv = None
         self.update()
       
     def next(self):
+        if self.i < self.n -2:
+            self.btnPrec.config(state=tk.NORMAL)
+        else:
+            self.btnSuiv.config(state=tk.DISABLED)
         if self.i < self.n -1:
             self.i+=1
         self.update()
         select_image(self.im)
     
     def prev(self):
+        if self.i > 1 :
+            self.btnSuiv.config(state=tk.NORMAL)
+        else:
+            self.btnPrec.config(state=tk.DISABLED)     
         if self.i > 0 :
             self.i-=1
         self.update()
@@ -156,10 +166,11 @@ def findDuplicates(in_list):
 
 
 
-def init(cat):
+def init(cat, fileEleves="noms.txt"):
     # initialize the window toolkit along with the image panel
     root = tk.Tk()
     root.title('Saisie des noms')
+    root.iconbitmap("dev\logo.ico")
     global panelA
     panelA = None
     
@@ -172,6 +183,7 @@ def init(cat):
     frame3.pack(side=tk.TOP, padx=10, pady=10)
     btnPrec = tk.Button(frame3, text="Précédent", width=20, height=1, command=lambda:prevImage(cat,valueName, strNumber, strScore, entree))
     btnPrec.grid(row=1, column=1, padx=10)
+    btnPrec.config(state=tk.DISABLED)
     
     strNumber = tk.StringVar() 
     strNumber.set("1 / "+ str(cat.n))
@@ -181,7 +193,8 @@ def init(cat):
     btnSuiv = tk.Button(frame3, text="Suivant", width=20, height=1, command=lambda:nextImage(cat,valueName, strNumber, strScore, entree))
     btnSuiv.grid(row=1, column=3, padx=10)
     
-   
+    cat.btnSuiv = btnSuiv
+    cat.btnPrec = btnPrec
     
     #Affichage du score
     strScore = tk.StringVar() 
@@ -203,9 +216,9 @@ def init(cat):
     labelName.pack(pady="5")
 
     isAutocomplete = False
-    fName = "noms.txt"
-    if os.path.exists(fName):
-       with open(fName, 'rb') as entriesFile:
+  
+    if os.path.exists(fileEleves):
+       with open(fileEleves, 'rb') as entriesFile:
            try:
                # entrée avec autocomplete
                entries = entriesFile.read().split('\n')
@@ -244,14 +257,14 @@ def on_closing(root):
 
 
 # main
-def promptNames(scores):    
+def promptNames(scores, fileEleves):    
     n=len(scores)
     images = resize_name(n)
     cat = ImageCatalogue(images, scores)
-    root = init(cat)
+    root = init(cat, fileEleves)
     root.protocol("WM_DELETE_WINDOW", lambda:on_closing(root))
     root.mainloop()
-    print(cat.names)
+    print "names :" , cat.names
     return cat.names
 
 
@@ -262,7 +275,7 @@ if __name__ == '__main__':
     pr = cProfile.Profile()
     pr.enable()
     """
-    promptNames([[310, 190, 120, '="4 / 6"', '="7 / 25"', '="20 / 39"', '="13 / 30"', '="10 / 30"', '="5 / 16"', '="17 / 29"', '="8 / 25"'], [780, 150, 130, '="3 / 6"', '="8 / 25"', '="19 / 39"', '="9 / 30"', '="14 / 30"', '="4 / 16"', '="18 / 29"', '="6 / 25"'], [330, 205, 125, '="3 / 6"', '="3 / 25"', '="25 / 39"', '="15 / 30"', '="10 / 30"', '="2 / 16"', '="18 / 29"', '="11 / 25"'], [255, 170, 85, '="2 / 6"', '="8 / 25"', '="19 / 39"', '="12 / 30"', '="5 / 30"', '="4 / 16"', '="17 / 29"', '="9 / 25"'], [275, 170, 105, '="0 / 6"', '="7 / 25"', '="20 / 39"', '="14 / 30"', '="9 / 30"', '="6 / 16"', '="13 / 29"', '="10 / 25"'], [345, 225, 120, '="3 / 6"', '="7 / 25"', '="24 / 39"', '="15 / 30"', '="9 / 30"', '="4 / 16"', '="20 / 29"', '="7 / 25"'], [845, 440, 405, '="1 / 6"', '="20 / 25"', '="35 / 39"', '="27 / 30"', '="29 / 30"', '="15 / 16"', '="22 / 29"', '="20 / 25"']])
+    promptNames([[310, 190, 120, '="4 / 6"', '="7 / 25"', '="20 / 39"', '="13 / 30"', '="10 / 30"', '="5 / 16"', '="17 / 29"', '="8 / 25"'], [780, 150, 130, '="3 / 6"', '="8 / 25"', '="19 / 39"', '="9 / 30"', '="14 / 30"', '="4 / 16"', '="18 / 29"', '="6 / 25"'], [330, 205, 125, '="3 / 6"', '="3 / 25"', '="25 / 39"', '="15 / 30"', '="10 / 30"', '="2 / 16"', '="18 / 29"', '="11 / 25"'], [255, 170, 85, '="2 / 6"', '="8 / 25"', '="19 / 39"', '="12 / 30"', '="5 / 30"', '="4 / 16"', '="17 / 29"', '="9 / 25"'], [275, 170, 105, '="0 / 6"', '="7 / 25"', '="20 / 39"', '="14 / 30"', '="9 / 30"', '="6 / 16"', '="13 / 29"', '="10 / 25"'], [345, 225, 120, '="3 / 6"', '="7 / 25"', '="24 / 39"', '="15 / 30"', '="9 / 30"', '="4 / 16"', '="20 / 29"', '="7 / 25"'], [845, 440, 405, '="1 / 6"', '="20 / 25"', '="35 / 39"', '="27 / 30"', '="29 / 30"', '="15 / 16"', '="22 / 29"', '="20 / 25"']], "noms.txt")
     """
     pr.disable()
      
