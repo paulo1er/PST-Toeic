@@ -3,7 +3,7 @@ from Interface import interface1
 import export
 from name import promptNames
 from loading import loading
-
+import tkMessageBox
 
 
 
@@ -24,6 +24,9 @@ def main():
     
     # debug
     export.exportAnswersEleves(answersEleves, names)
+    
+    tkMessageBox.showinfo("Terminé", "Export terminé : résultats dans moyennes_classe.csv et scores_individuels.csv")
+    
 
 """
 import cProfile

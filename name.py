@@ -119,25 +119,31 @@ class ImageCatalogue:
         return self.scores[self.i][0]
         
 
-def prevImage(cat,valueName, strNumber, strScore, entree):
+def prevImage(cat,valueName, strNumber, strScore, entree, isAutocomplete):
     cat.changeName(valueName.get())
     cat.prev()
     valueName.set(cat.name)
     strNumber.set(str(cat.i+1) + " / "+str(cat.n))
     strScore.set("Score : " + str(cat.getScore()))
-    entree._update_autocomplete(None)
-    entree.entry.focus()
+    if isAutocomplete:
+        entree._update_autocomplete(None)
+        entree.entry.focus()
+    else:
+        entree.focus()
     
     
     
-def nextImage(cat,valueName, strNumber, strScore, entree):
+def nextImage(cat,valueName, strNumber, strScore, entree, isAutocomplete):
     cat.changeName(valueName.get())
     cat.next()  
     valueName.set(cat.name)
     strNumber.set(str(cat.i+1) + " / "+str(cat.n))
     strScore.set("Score : " + str(cat.getScore()))
-    entree._update_autocomplete(None)
-    entree.entry.focus()
+    if isAutocomplete:
+        entree._update_autocomplete(None)
+        entree.entry.focus()
+    else:
+        entree.focus()
 
 
 def validate(cat, root, valueName):
@@ -177,46 +183,13 @@ def init(cat, fileEleves="noms.txt"):
     
     select_image(cat.im)
     
-
-      # Images precedentes, compteur et suivantes
-    frame3 = tk.Frame(root, relief=tk.GROOVE)
-    frame3.pack(side=tk.TOP, padx=10, pady=10)
-    btnPrec = tk.Button(frame3, text="Précédent", width=20, height=1, command=lambda:prevImage(cat,valueName, strNumber, strScore, entree))
-    btnPrec.grid(row=1, column=1, padx=10)
-    btnPrec.config(state=tk.DISABLED)
-    
-    strNumber = tk.StringVar() 
-    strNumber.set("1 / "+ str(cat.n))
-    labelNumber = tk.Label(frame3, textvariable =strNumber)
-    labelNumber.grid(row=1, column=2, padx=5, pady=6)
-    
-    btnSuiv = tk.Button(frame3, text="Suivant", width=20, height=1, command=lambda:nextImage(cat,valueName, strNumber, strScore, entree))
-    btnSuiv.grid(row=1, column=3, padx=10)
-    
-    cat.btnSuiv = btnSuiv
-    cat.btnPrec = btnPrec
-    
-    #Affichage du score
-    strScore = tk.StringVar() 
-    strScore.set("Score : " + str(cat.getScore()))
-    labelScore = tk.Label(root, textvariable =strScore)
-    labelScore.pack( padx="10", pady="8")
-    
-    
-    #Bouton valider
-    btnFinish = tk.Button(root, text="Valider", width=30, height=1, command= lambda:validate(cat, root, valueName ))
-    btnFinish.pack(side="bottom",  padx="10", pady="18")
-    
-    
-    
     # Nom et prénom
     Frame1 = tk.Frame(root, borderwidth=0, relief=tk.GROOVE)
-    Frame1.pack( padx=30, pady=5)
     labelName = tk.Label(Frame1, text="Nom Prénom")
     labelName.pack(pady="5")
-
+    
+    # Entrée du nom
     isAutocomplete = False
-  
     if os.path.exists(fileEleves):
        with open(fileEleves, 'rb') as entriesFile:
            try:
@@ -229,9 +202,6 @@ def init(cat, fileEleves="noms.txt"):
                entree = AutocompleteEntry(frameEntree)
                valueName = entree.text
                entree.build(entries, no_results_message=None, max_entries=5)
-               entree.pack(pady="1")
-    
-               
                isAutocomplete = True
            except : 
                print "erreur de l'importation du fichier noms.txt" 
@@ -239,9 +209,39 @@ def init(cat, fileEleves="noms.txt"):
     if not isAutocomplete:
        valueName = tk.StringVar() 
        entree = tk.Entry(Frame1, textvariable=valueName, width=60)
-       entree.pack(pady="3") 
+
+
+    # Images precedentes, compteur et suivantes
+    frame3 = tk.Frame(root, relief=tk.GROOVE)
+    frame3.pack(side=tk.TOP, padx=10, pady=10)
+    btnPrec = tk.Button(frame3, text="Précédent", width=20, height=1, command=lambda:prevImage(cat,valueName, strNumber, strScore, entree, isAutocomplete))
+    btnPrec.grid(row=1, column=1, padx=10)
+    btnPrec.config(state=tk.DISABLED)
     
- 
+    strNumber = tk.StringVar() 
+    strNumber.set("1 / "+ str(cat.n))
+    labelNumber = tk.Label(frame3, textvariable =strNumber)
+    labelNumber.grid(row=1, column=2, padx=5, pady=6)
+    
+    btnSuiv = tk.Button(frame3, text="Suivant", width=20, height=1, command=lambda:nextImage(cat,valueName, strNumber, strScore, entree, isAutocomplete))
+    btnSuiv.grid(row=1, column=3, padx=10)
+    
+    cat.btnSuiv = btnSuiv
+    cat.btnPrec = btnPrec
+    
+    #Affichage du score
+    strScore = tk.StringVar() 
+    strScore.set("Score : " + str(cat.getScore()))
+    labelScore = tk.Label(root, textvariable =strScore)
+    labelScore.pack( padx="10", pady="8")
+    
+    #Bouton valider
+    btnFinish = tk.Button(root, text="Valider", width=30, height=1, command= lambda:validate(cat, root, valueName ))
+    btnFinish.pack(side="bottom",  padx="10", pady="18")
+    
+    # affichage du Nom et prénom et entrée du nom
+    Frame1.pack( padx=30, pady=5)
+    entree.pack(pady="3") 
     
     return root
     
