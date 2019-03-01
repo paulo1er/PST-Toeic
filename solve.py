@@ -14,7 +14,7 @@ def getAnswers(filepath):
     results = []
     for i in range(n):
         print(i)
-        pathJPG = "run/temp/out"+str(i)+".jpg"
+        pathJPG = "run/out"+str(i)+".jpg"
         img = cv.imread(pathJPG)
         img = resize(img)
         cv.imwrite(pathJPG, img);
@@ -122,7 +122,7 @@ def solve(img1, debug = False):
     result+=trouverLettre(reading, coordonneReading, mask, circles, rayon, alphaList, 100, debug)
     
     
-    print(result)
+    #print(result)
     return result
 
 
@@ -134,7 +134,7 @@ if __name__ == '__main__':
     pr = cProfile.Profile()
     pr.enable()
     """
-    image=img = cv.imread(r'run\temp\out2.jpg')
+    image=img = cv.imread(r'run\out2.jpg')
     result = solve(image, True  )
     """
     pr.disable()

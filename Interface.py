@@ -5,6 +5,9 @@ import tkMessageBox
 import sys
 
 
+fileCorrige = ""
+fileCopies = ""
+fileEleves = "noms.txt"
 
 def openFile(string, types=[('pdf files', '.pdf')]):
     #pour cacher l'autre root
@@ -15,7 +18,7 @@ def openFile(string, types=[('pdf files', '.pdf')]):
     return(filepath)
 
 
-def openCorrige():
+def openCorrige(root, strCorrige, buttonValidate):
     global fileCorrige
     temp = openFile('Pdf du corrigé')
     if temp != "":
@@ -27,7 +30,7 @@ def openCorrige():
     else:
         buttonValidate.config(state=tk.DISABLED)
 
-def openCopies():
+def openCopies(root, strCopies, buttonValidate):
     global fileCopies
     temp = openFile('Pdf des copies')
     if temp != "":
@@ -41,7 +44,7 @@ def openCopies():
         
         
     
-def openEleves():
+def openEleves(root, strEleves):
     global fileEleves
     temp = openFile('Liste des élèves', [('text files', '.txt')])
     if temp != "":
@@ -51,7 +54,7 @@ def openEleves():
     
     
 
-def validate():
+def validate(root):
     if fileCorrige != "" and fileCopies != "":
         root.destroy()
 
@@ -64,56 +67,55 @@ def on_closing(root):
         sys.exit(0)
 
 
-
-root = tk.Tk()
-#root.configure(background='white')
-root.title('Choix des pdf')
-root.minsize(300,10)
-root.iconbitmap("dev\logo.ico")
-
-
-imageEx = tk.PhotoImage(file = 'Dev/IMTLD_RVB_Baseline.gif')
-panelA = tk.Label(image=imageEx)
-panelA.image = imageEx
-panelA.grid(row=1, column=1)
-labelTitle = tk.Label(root, width=52, height=5, font=("Arial Bold", 13), text="Correction automatique de grilles de TOEIC", takefocus=0, justify=tk.LEFT, bg="#FFFFFF")
-labelTitle.grid(row=1, column=2)
-#labelTitle.pack(side="top", fill="both", expand="yes", padx="10", pady="10")
+def interface1():
+    root = tk.Tk()
+    #root.configure(background='white')
+    root.title('Choix des pdf')
+    root.minsize(300,10)
+    root.iconbitmap("dev\logo.ico")
+    
+    
+    imageEx = tk.PhotoImage(file = 'Dev/IMTLD_RVB_Baseline.gif')
+    panelA = tk.Label(image=imageEx)
+    panelA.image = imageEx
+    panelA.grid(row=1, column=1)
+    labelTitle = tk.Label(root, width=52, height=5, font=("Arial Bold", 13), text="Correction automatique de grilles de TOEIC", takefocus=0, justify=tk.LEFT, bg="#FFFFFF")
+    labelTitle.grid(row=1, column=2)
+    #labelTitle.pack(side="top", fill="both", expand="yes", padx="10", pady="10")
+        
+    
+    strCorrige = tk.StringVar()
+    strCorrige.set('Aucun')
     
 
-fileCorrige = ""
-strCorrige = tk.StringVar()
-strCorrige.set('Aucun')
+    strCopies= tk.StringVar()
+    strCopies.set('Aucun')
+    
 
-fileCopies = ""
-strCopies= tk.StringVar()
-strCopies.set('Aucun')
-
-fileEleves = "noms.txt"
-strEleves= tk.StringVar()
-strEleves.set('Aucun')
-
-progress = tk.StringVar()
-progress.set('0%')
-
-
-tk.Button(root, text ='Pdf du corrigé', width=20, height=1, command=openCorrige).grid(row=2, column=1, padx=5, pady=5)
-l1 = tk.Label(root, textvariable =strCorrige)
-l1.grid(row=2, column=2, sticky='W', padx=10)
-tk.Button(root, text ='Pdf des copies', width=20, height=1, command=openCopies).grid(row=3, column=1, padx=5, pady=5)
-l2 = tk.Label(root, textvariable =strCopies)
-l2.grid(row=3, column=2, sticky='W', padx=10)
-tk.Button(root, text ='Liste des élèves (optionnel)', width=20, height=1, command=openEleves).grid(row=4, column=1, padx=5, pady=5)
-l3 = tk.Label(root, textvariable =strEleves)
-l3.grid(row=4, column=2, sticky='W', padx=10)
-
-
-buttonValidate = tk.Button(root, text ='Valider', width=20, height=1, command=validate)
-buttonValidate.grid(row=5, column=1, columnspan=3, padx=5, pady=5)
-buttonValidate.config(state=tk.DISABLED) 
+    strEleves= tk.StringVar()
+    strEleves.set('Aucun')
+    
+    progress = tk.StringVar()
+    progress.set('0%')
+    
+    
+    tk.Button(root, text ='Pdf du corrigé', width=20, height=1, command=lambda:openCorrige(root, strCorrige, buttonValidate)).grid(row=2, column=1, padx=5, pady=5)
+    l1 = tk.Label(root, textvariable =strCorrige)
+    l1.grid(row=2, column=2, sticky='W', padx=10)
+    tk.Button(root, text ='Pdf des copies', width=20, height=1, command=lambda:openCopies(root, strCopies, buttonValidate)).grid(row=3, column=1, padx=5, pady=5)
+    l2 = tk.Label(root, textvariable =strCopies)
+    l2.grid(row=3, column=2, sticky='W', padx=10)
+    tk.Button(root, text ='Liste des élèves (optionnel)', width=20, height=1, command=lambda:openEleves(root, strEleves)).grid(row=4, column=1, padx=5, pady=5)
+    l3 = tk.Label(root, textvariable =strEleves)
+    l3.grid(row=4, column=2, sticky='W', padx=10)
+    
+    
+    buttonValidate = tk.Button(root, text ='Valider', width=20, height=1, command=lambda:validate(root))
+    buttonValidate.grid(row=5, column=1, columnspan=3, padx=5, pady=5)
+    buttonValidate.config(state=tk.DISABLED) 
 
 
-def interface1():
+
     root.protocol("WM_DELETE_WINDOW", lambda:on_closing(root))
     root.mainloop()
     return(fileCorrige,fileCopies, fileEleves)

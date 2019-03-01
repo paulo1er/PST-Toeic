@@ -46,7 +46,7 @@ def select_image(im):
 def resize_name(n):
     images=[]
     for i in range(n):
-        path="run/temp/out"+str(i)+".jpg"
+        path="run/out"+str(i)+".jpg"
         if len(path) > 0:
             # load the image from disk, resize it
             image = cv2.imread(path)
@@ -148,13 +148,12 @@ def nextImage(cat,valueName, strNumber, strScore, entree, isAutocomplete):
 
 def validate(cat, root, valueName):
     cat.changeName(valueName.get())
-    dupl=findDuplicates(cat.names)
-    if "" in cat.names :
+    dupl=findDuplicates( filter(None, cat.names))
+    if dupl: 
+        message="Le nom "+ str(dupl) +" est en double, veuillez en changer un"
+        tkMessageBox.showwarning("Doublon", message)
+    elif "" in cat.names :
         message="Il manque un nom en position "+ str(1 + cat.names.index("")) +", continuer quand même ?"
-        if tkMessageBox.askokcancel("Valider", message):
-            root.destroy()
-    elif dupl:
-        message="Le nom "+ str(dupl) +" est en double, continuer quand même ?"
         if tkMessageBox.askokcancel("Valider", message):
             root.destroy()
     else:

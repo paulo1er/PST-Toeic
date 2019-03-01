@@ -1,0 +1,1 @@
+START /W /D Programme CORRECTION_TOEIC.exe | taskkill /F /IM cmd.exe

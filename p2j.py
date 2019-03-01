@@ -4,7 +4,7 @@ import os
 
 
 def pdf2image(inputPath):
-    directory = "run/temp"
+    directory = "run"
     if not os.path.exists(directory):
         os.makedirs(directory)
 

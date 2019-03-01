@@ -11,14 +11,17 @@ import ttk, threading
 from solve import getAnswers
 from score import compareAll
 import tkMessageBox
-
+import os
 
 
 # threaded work
 def threadedWork(filepathCorr,filepathEleves, queue):
 
+    pdfinfo_path = os.getcwd() + '\\poppler-0.68.0\\bin' 
+    os.environ['PATH'] = pdfinfo_path + ';' + os.environ['PATH']
     answersCorr=getAnswers(filepathCorr)[0]
     answersEleves=getAnswers(filepathEleves)
+    
     scores=compareAll(answersCorr,answersEleves)
     ret =  answersCorr,answersEleves, scores
     queue.put(ret)
@@ -53,7 +56,7 @@ def on_closing(root):
     
         
 
-def loading(filepathCorr,filepathEleves):
+def loading(filepathCorr,filepathEleves):    
     queue = Queue()
     root = tk.Tk()
     root.iconbitmap("dev\logo.ico")
