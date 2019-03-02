@@ -31,4 +31,4 @@ setup(
 	
 	
 	options = {"build_exe": build_exe_options},
-    executables = [Executable("CORRECTION_TOEIC.py", base = base)])
+    executables = [Executable("CORRECTION_TOEIC.py", base = base, icon= "Dev\logo.ico")])

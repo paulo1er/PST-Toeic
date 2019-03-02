@@ -7,7 +7,7 @@ import sys
 
 fileCorrige = ""
 fileCopies = ""
-fileEleves = "noms.txt"
+fileEleves = ""
 
 def openFile(string, types=[('pdf files', '.pdf')]):
     #pour cacher l'autre root

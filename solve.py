@@ -7,36 +7,20 @@ from resize import resize
 
 
 
-#prend en entee le chemin vers un pdf et donne les reponses ABCD donnees
-def getAnswers(filepath):
-    n = pdf2image(filepath)
-    """faudra penser a matcher la resolution de p2j avec celle de la photocopieuse"""
-    results = []
-    for i in range(n):
-        print(i)
-        pathJPG = "run/out"+str(i)+".jpg"
-        img = cv.imread(pathJPG)
-        img = resize(img)
-        cv.imwrite(pathJPG, img);
-        results.append(solve(img, False))
-    return results
 
 
 
 
-
-
-
-def trouverLettre(part_img, coord, mask, circles, rayon, alphaList, section=0, debug=False):
-    result=[]
+def trouverLettre(part_img, coord, mask, circles, rayon, section=0, debug=False):
+    reponseList=[]
     for i in range(0, 100, 1) :
        
         roi_color = part_img[coord['y1'][i]:coord['y2'][i], coord['x1'][i]:coord['x2'][i]]
-    
+        
         ret, thresh = cv.threshold(roi_color, 170, 255, cv.THRESH_BINARY)
-    
+        
         img_tresh = cv.bitwise_and(thresh,thresh, mask=mask)
-    
+
         jc = 1
         minMeanjc = 0
         #minMean = 255
@@ -44,9 +28,9 @@ def trouverLettre(part_img, coord, mask, circles, rayon, alphaList, section=0, d
         for j in circles:
             width2 = [int(j[0] - rayon), int(j[0] + rayon)]
             height2 = [int(j[1] - rayon), int(j[1] + rayon)]
-    
+
             roi = img_tresh[height2[0]:height2[1], width2[0]:width2[1]]
-    
+
             if (cv.mean(roi)[0] < 115) and (not doubleReponse):
                 if(minMeanjc != 0):
                     minMeanjc = 0
@@ -55,21 +39,22 @@ def trouverLettre(part_img, coord, mask, circles, rayon, alphaList, section=0, d
                     #minMean = cv.mean(roi)[0]
                     minMeanjc = jc
             jc += 1
-    
-        if debug :
-            cv.imshow(str(section+i), img_tresh)
+
+        if debug:
+            cv.imshow("img", img_tresh)
             cv.waitKey(0)
-            cv.destroyAllWindows()
+
+        reponseList.append(minMeanjc)
+
     
-        result.append(alphaList[minMeanjc])
-    return result
+    return reponseList
 
 
 
 
 
 
-def solve(img1, debug = False):
+def solve(img1, coordonneListening, coordonneReading, debug = False, rayon = 18):
     #cv.imshow('Image', cv.resize(img1, (899 , 636)))
     #cv.waitKey(0)
 
@@ -90,7 +75,80 @@ def solve(img1, debug = False):
 
     result = []
 
+    width = 200
+    height = 40
+    
+    circles = [[18,20], [72,20], [126,20], [181,20]]
+
+   
+    mask_img = np.zeros((height,width,1), np.uint8)
+    for circle in circles:
+         cv.circle(mask_img, (circle[0], circle[1]), rayon, (255, 255, 255), -1)
+    ret, mask = cv.threshold(mask_img, 170, 255, cv.THRESH_BINARY)
+
+    
+    result=trouverLettre(listening, coordonneListening, mask, circles, rayon, 0, debug)
+    result+=trouverLettre(reading, coordonneReading, mask, circles, rayon, 100, debug)
+
+    return result
+
+
+
+
+#prend en entree le chemin vers un pdf et donne les reponses ABCD donnees
+def getAnswers(filepath):
+    n = pdf2image(filepath)
+    results = []
     alphaList = ['None', 'A', 'B', 'C', 'D']
+    rayon = 18
+    coordonneListening = {
+        "x1" : [83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859],
+        "y1" : [1,48,94,141,187,234,280,327,373,420,466,513,560,606,653,699,746,792,839,885,932,978,1025,1071,1118,1,48,94,141,187,234,280,327,373,420,466,513,560,606,653,699,746,792,839,885,932,978,1025,1071,1118,1,48,94,141,187,234,280,327,373,420,466,513,560,606,653,699,746,792,839,885,932,978,1025,1071,1118,1,48,94,141,187,234,280,327,373,420,466,513,560,606,653,699,746,792,839,885,932,978,1025,1071,1118],
+        "x2" : [283,283,283,283,283,283,283,283,283,283,283,283,283,283,283,283,283,283,283,283,283,283,283,283,283,535,535,535,535,535,535,535,535,535,535,535,535,535,535,535,535,535,535,535,535,535,535,535,535,535,790,790,790,790,790,790,790,790,790,790,790,790,790,790,790,790,790,790,790,790,790,790,790,790,790,1059,1059,1059,1059,1059,1059,1059,1059,1059,1059,1059,1059,1059,1059,1059,1059,1059,1059,1059,1059,1059,1059,1059,1059,1059],
+        "y2" : [41,88,134,181,227,274,320,367,413,460,506,553,600,646,693,739,786,832,879,925,972,1018,1065,1111,1158,41,88,134,181,227,274,320,367,413,460,506,553,600,646,693,739,786,832,879,925,972,1018,1065,1111,1158,41,88,134,181,227,274,320,367,413,460,506,553,600,646,693,739,786,832,879,925,972,1018,1065,1111,1158,41,88,134,181,227,274,320,367,413,460,506,553,600,646,693,739,786,832,879,925,972,1018,1065,1111,1158]
+    }
+    coordonneReading = {
+        "x1" : [76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,342,342,342,342,342,342,342,342,342,342,342,342,342,342,342,342,342,342,342,342,342,342,342,342,342,610,610,610,610,610,610,610,610,610,610,610,610,610,610,610,610,610,610,610,610,610,610,610,610,610,879,879,879,879,879,879,879,879,879,879,879,879,879,879,879,879,879,879,879,879,879,879,879,879,879],
+        "y1" : [1,48,94,141,187,234,280,327,373,420,466,513,560,606,653,699,746,792,839,885,932,978,1025,1071,1118,1,48,94,141,187,234,280,327,373,420,466,513,560,606,653,699,746,792,839,885,932,978,1025,1071,1118,1,48,94,141,187,234,280,327,373,420,466,513,560,606,653,699,746,792,839,885,932,978,1025,1071,1118,1,48,94,141,187,234,280,327,373,420,466,513,560,606,653,699,746,792,839,885,932,978,1025,1071,1118],
+        "x2" : [276,276,276,276,276,276,276,276,276,276,276,276,276,276,276,276,276,276,276,276,276,276,276,276,276,542,542,542,542,542,542,542,542,542,542,542,542,542,542,542,542,542,542,542,542,542,542,542,542,542,810,810,810,810,810,810,810,810,810,810,810,810,810,810,810,810,810,810,810,810,810,810,810,810,810,1079,1079,1079,1079,1079,1079,1079,1079,1079,1079,1079,1079,1079,1079,1079,1079,1079,1079,1079,1079,1079,1079,1079,1079,1079],
+        "y2" : [41,88,134,181,227,274,320,367,413,460,506,553,600,646,693,739,786,832,879,925,972,1018,1065,1111,1158,41,88,134,181,227,274,320,367,413,460,506,553,600,646,693,739,786,832,879,925,972,1018,1065,1111,1158,41,88,134,181,227,274,320,367,413,460,506,553,600,646,693,739,786,832,879,925,972,1018,1065,1111,1158,41,88,134,181,227,274,320,367,413,460,506,553,600,646,693,739,786,832,879,925,972,1018,1065,1111,1158]
+    }
+    
+    
+    for i in range(n):   
+        print i
+       
+        pathJPG = "run/out"+str(i)+".jpg"
+        img = cv.imread(pathJPG)
+        
+        img = resize(img)
+        width, height = img.shape[:2]
+        
+        results.append(solve(img, coordonneListening, coordonneReading, False, rayon))
+        
+        for j in range(len(results[i])):
+           
+            if j<100:
+                if results[i][j]:
+                   
+                    coord= (results[i][j]*54-int(height*0.00395)+coordonneListening['x1'][j],int(width*0.279)+coordonneListening['y1'][j])
+                    cv.circle(img,coord, rayon, ( 255, 0, 0 ),thickness=2)
+            else:
+                if results[i][j]:
+                    coord=(results[i][j]*54+int(height*0.495)+coordonneReading['x1'][j-100],int(width*0.279)+coordonneReading['y1'][j-100])
+                    cv.circle(img, coord , rayon, ( 255, 0, 0 ),thickness=2)
+            results[i][j]=alphaList[results[i][j]]
+        
+        cv.imwrite(pathJPG, img)
+      
+    return results
+
+
+
+
+
+
+if __name__ == '__main__':
     coordonneListening = {
         "x1" : [83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859],
         "y1" : [1,48,94,141,187,234,280,327,373,420,466,513,560,606,653,699,746,792,839,885,932,978,1025,1071,1118,1,48,94,141,187,234,280,327,373,420,466,513,560,606,653,699,746,792,839,885,932,978,1025,1071,1118,1,48,94,141,187,234,280,327,373,420,466,513,560,606,653,699,746,792,839,885,932,978,1025,1071,1118,1,48,94,141,187,234,280,327,373,420,466,513,560,606,653,699,746,792,839,885,932,978,1025,1071,1118],
@@ -104,30 +162,6 @@ def solve(img1, debug = False):
         "y2" : [41,88,134,181,227,274,320,367,413,460,506,553,600,646,693,739,786,832,879,925,972,1018,1065,1111,1158,41,88,134,181,227,274,320,367,413,460,506,553,600,646,693,739,786,832,879,925,972,1018,1065,1111,1158,41,88,134,181,227,274,320,367,413,460,506,553,600,646,693,739,786,832,879,925,972,1018,1065,1111,1158,41,88,134,181,227,274,320,367,413,460,506,553,600,646,693,739,786,832,879,925,972,1018,1065,1111,1158]
     }
 
-    width = 200
-    height = 40
-    rayon = 18
-    circles = [[18,20], [72,20], [126,20], [181,20]]
-
-   
-    mask_img = np.zeros((height,width,1), np.uint8)
-
-    for circle in circles:
-        cv.circle(mask_img, (circle[0], circle[1]), rayon, (255, 255, 255), -1)
-
-    ret, mask = cv.threshold(mask_img, 170, 255, cv.THRESH_BINARY)
-
-    
-    result=trouverLettre(listening, coordonneListening, mask, circles, rayon, alphaList, 0, debug)
-    result+=trouverLettre(reading, coordonneReading, mask, circles, rayon, alphaList, 100, debug)
-    
-    
-    #print(result)
-    return result
-
-
-if __name__ == '__main__':
-
     """
     import cProfile
 
@@ -135,7 +169,7 @@ if __name__ == '__main__':
     pr.enable()
     """
     image=img = cv.imread(r'run\out2.jpg')
-    result = solve(image, True  )
+    result = solve(image, coordonneListening,coordonneReading, False  )
     """
     pr.disable()
 

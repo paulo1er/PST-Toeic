@@ -14,19 +14,6 @@ import tkMessageBox
 import os
 
 
-# threaded work
-def threadedWork(filepathCorr,filepathEleves, queue):
-
-    pdfinfo_path = os.getcwd() + '\\poppler-0.68.0\\bin' 
-    os.environ['PATH'] = pdfinfo_path + ';' + os.environ['PATH']
-    answersCorr=getAnswers(filepathCorr)[0]
-    answersEleves=getAnswers(filepathEleves)
-    
-    scores=compareAll(answersCorr,answersEleves)
-    ret =  answersCorr,answersEleves, scores
-    queue.put(ret)
-
-
 
 
 # Function to check state of thread 
@@ -55,6 +42,23 @@ def on_closing(root):
     tkMessageBox.showinfo("Interruption", "Veuillez ne pas quitter pendant cette étape, qui dure environ 2min pour 100 copies")
     
         
+
+
+# threaded work
+def threadedWork(filepathCorr,filepathEleves, queue):
+
+    pdfinfo_path = os.getcwd() + '\\poppler-0.68.0\\bin' 
+    os.environ['PATH'] = pdfinfo_path + ';' + os.environ['PATH']
+    answersCorr=getAnswers(filepathCorr)[0]
+    answersEleves=getAnswers(filepathEleves)
+    
+    scores=compareAll(answersCorr,answersEleves)
+    ret =  answersCorr,answersEleves, scores
+    queue.put(ret)
+
+
+
+
 
 def loading(filepathCorr,filepathEleves):    
     queue = Queue()

@@ -148,10 +148,17 @@ def nextImage(cat,valueName, strNumber, strScore, entree, isAutocomplete):
 
 def validate(cat, root, valueName):
     cat.changeName(valueName.get())
+
+    illegal = ['NUL','\\','//',':','*','"','<','>','|',':','/','?']
+    for name in cat.names:
+        name.encode("utf-8")
+        for i in illegal:
+            name = name.replace(i, '')
     dupl=findDuplicates( filter(None, cat.names))
     if dupl: 
         message="Le nom "+ str(dupl) +" est en double, veuillez en changer un"
         tkMessageBox.showwarning("Doublon", message)
+        
     elif "" in cat.names :
         message="Il manque un nom en position "+ str(1 + cat.names.index("")) +", continuer quand même ?"
         if tkMessageBox.askokcancel("Valider", message):
@@ -256,7 +263,7 @@ def on_closing(root):
 
 
 # main
-def promptNames(scores, fileEleves):    
+def promptNames(scores, fileEleves='noms.txt'):    
     n=len(scores)
     images = resize_name(n)
     cat = ImageCatalogue(images, scores)
