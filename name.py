@@ -149,7 +149,7 @@ def nextImage(cat,valueName, strNumber, strScore, entree, isAutocomplete):
 def validate(cat, root, valueName):
     cat.changeName(valueName.get())
 
-    illegal = ['NUL','\\','//',':','*','"','<','>','|',':','/','?']
+    illegal = ['NUL','\\','//',':','*','"','<','>','|','/','?',';',","]
     for name in cat.names:
         name.encode("utf-8")
         for i in illegal:

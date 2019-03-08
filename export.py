@@ -2,7 +2,7 @@
 
 def exportIndiv(results, names):
     f = open("scores_individuels.csv", "w")
-    csv = "Nom;Total;Listening;Reading;Description d'images;Questions-Reponses;Dialogues;Discussions - Annonces;Phrases a completer;Textes a completer;Lecture contenus rediriges,  Passages simples;Lecture contenus rediriges, Passages multiples"
+    csv = "Nom;Total;Listening;Reading;Description d'images;Questions-Reponses;Dialogues;Discussions - Annonces;Phrases a completer;Textes a completer;Lecture contenus rediriges - Passages simples;Lecture contenus rediriges - Passages multiples"
     csv += "\n"
 
     ic=1
