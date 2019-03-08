@@ -8,12 +8,12 @@ Created on Sun Feb 24 10:33:59 2019
 import Tkinter as tk
 from Queue import Queue
 import ttk, threading
-from solve import getAnswers
-from score import compareAll
 import tkMessageBox
 import os
 
-
+#imports personnels
+from solve import getAnswers
+from score import compareAll
 
 
 # Function to check state of thread 
@@ -46,14 +46,13 @@ def on_closing(root):
 
 # threaded work
 def threadedWork(filepathCorr,filepathEleves, queue):
-
     pdfinfo_path = os.getcwd() + '\\poppler-0.68.0\\bin' 
     os.environ['PATH'] = pdfinfo_path + ';' + os.environ['PATH']
     answersCorr=getAnswers(filepathCorr)[0]
     answersEleves=getAnswers(filepathEleves)
     
     scores=compareAll(answersCorr,answersEleves)
-    ret =  answersCorr,answersEleves, scores
+    ret =  answersCorr,answersEleves, scores    
     queue.put(ret)
 
 

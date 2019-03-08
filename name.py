@@ -10,9 +10,12 @@ import tkMessageBox
 from PIL import Image
 from PIL import ImageTk
 import cv2
-import sys
-from tkinter_autocomplete import AutocompleteEntry
 import os
+import sys
+
+#imports personnels
+from tkinter_autocomplete import AutocompleteEntry
+
  
 def select_image(im):
 

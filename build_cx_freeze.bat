@@ -8,13 +8,6 @@ ROBOCOPY CORRECTION_TOEIC CORRECTION_TOEIC /S /MOVE
 ROBOCOPY build build /S /MOVE
 
 
-
-
-PAUSE
-
-
-
-
 REM build application
 C:\Users\Guillaume\Anaconda2\envs\pst25\python.exe setup_cx_freeze.py
 

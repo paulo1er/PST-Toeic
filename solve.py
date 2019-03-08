@@ -1,13 +1,12 @@
+# -*- coding: utf-8 -*-
+
 import cv2 as cv
 import numpy as np
+
+
+#imports personnels
 from p2j import pdf2image
 from resize import resize
-
-
-
-
-
-
 
 
 
