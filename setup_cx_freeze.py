@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+
+"""
+This file is used to build the exe with cx_Freeze module
+"""
+
 import sys
 from cx_Freeze import setup, Executable
 

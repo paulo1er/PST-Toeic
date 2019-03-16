@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+
+"""
+MAIN FILE : 
+This file contains functions to correct the TOEIC automatically
+"""
+
 import tkMessageBox
 import Tkinter as tk
 import os
@@ -9,10 +15,10 @@ import shutil
 import export
 from name import promptNames
 from loading import loading
-from Interface import interface1
+from Interface import interface
 
 
-
+# copies the CSV output files and the used images in the "Resultats" folder
 def rename_images(names):
     path = "Resultats"
     try:
@@ -24,6 +30,7 @@ def rename_images(names):
         os.makedirs(path+"\copies_corrigees")
     for i in range(len(names)):
         if len(names[i])>0:
+            # rename it with the name of the student
             old_file = os.path.join("run", 'out'+ str(i) +'.jpg')
             name = str(names[i].encode('utf-8').strip())
             try:
@@ -55,7 +62,7 @@ def main():
         os.makedirs(path)
     
     # get the names of the pdf files
-    filepathCorr,filepathEleves, listeEleves = interface1();
+    filepathCorr,filepathEleves, listeEleves = interface();
 
     # get the scores while displaying loading bar
     answersCorr,answersEleves,scores = loading(filepathCorr,filepathEleves)
@@ -67,17 +74,10 @@ def main():
     export.exportIndiv(scores[0], names)
     export.exportClasse(scores[1],scores[2])
     
-    # debug
-    # export.exportAnswersEleves(answersEleves, names)
+    # debug : export the answers given by the students (ABCD) in CSV
+    #export.exportAnswersEleves(answersEleves, names)
     
     rename_images(names)
-    
-    
-    try:
-        shutil.rmtree(path)
-    except:
-        print "aucun dossier run"
-    
     
     root = tk.Tk()
     root.withdraw()

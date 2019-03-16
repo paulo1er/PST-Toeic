@@ -5,25 +5,32 @@ Created on Thu Jan 24 09:48:13 2019
 @author: Guillaume
 """
 
+
+"""
+This file contains functions to display the UI for prompting the names of the students
+"""
+
+
 import Tkinter as tk
 import tkMessageBox
 from PIL import Image
 from PIL import ImageTk
-import cv2
+import cv2 as cv
 import os
 import sys
 
 #imports personnels
 from tkinter_autocomplete import AutocompleteEntry
 
- 
+
+# updates the image when the user navigates
 def select_image(im):
 
     # grab a reference to the image panels
     global panelA
     # OpenCV represents images in BGR order; however PIL represents
     # images in RGB order, so we need to swap the channels
-    im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
+    im = cv.cvtColor(im, cv.COLOR_BGR2RGB)
     # convert the images to PIL format...
     im = Image.fromarray(im)
      
@@ -45,40 +52,51 @@ def select_image(im):
         panelA.image = im
 
 
-
-def resize_name(n):
+# before displaying the interface, crops ALL the images to display onl the names
+# also prints the scores on each one
+def resize_name(n, score):
     images=[]
     for i in range(n):
         path="run/out"+str(i)+".jpg"
+        # for each student
         if len(path) > 0:
-            # load the image from disk, resize it
-            image = cv2.imread(path)
+            image = cv.imread(path)
             
+            # print the score onthe image and saves it           
+            fontface = cv.FONT_HERSHEY_SIMPLEX
+            fontscale = 3
+            fontcolor = (255, 0, 0)
+            thickness=3
+            cv.putText(image, str(score[i][0]), (400, 250), fontface, fontscale, fontcolor, thickness) 
+            cv.imwrite(path,image)
+            
+            # resize the 2 images
             width, height = image.shape[:2]
             y=int(0.022*height)
             h=int(0.05*height)
             x=int(0.02*width)
             w=int(0.66*width)
             last_name = image[y:y+h, x:x+w]
-            last_name = cv2.copyMakeBorder(last_name,0,h,0,0,cv2.BORDER_CONSTANT,value=[0,0,0])
+            last_name = cv.copyMakeBorder(last_name,0,h,0,0,cv.BORDER_CONSTANT,value=[0,0,0])
             
             x=int(0.73*width)
             first_name = image[y:y+h, x:x+w]
             names=last_name
+            
+            #merge the images
             names[h:2*h, :] = first_name
             
+            # resize the image
             target_width = 500
             target_height = 160
-            names = cv2.resize(names, (target_width, target_height))
+            names = cv.resize(names, (target_width, target_height))
             
-            #cv2.imshow("names", names)
-            #cv2.waitKey(0)
             images.append(names)
     return images
 
 
 
-
+# object containing all the informations of the students and the images
 class ImageCatalogue:
     def changeName(self,valueName):
         self.names[self.i]=(valueName)
@@ -122,10 +140,12 @@ class ImageCatalogue:
         return self.scores[self.i][0]
         
 
+# called upon pressing "previous" button
 def prevImage(cat,valueName, strNumber, strScore, entree, isAutocomplete):
     cat.changeName(valueName.get())
     cat.prev()
     valueName.set(cat.name)
+    # change the displayed index 
     strNumber.set(str(cat.i+1) + " / "+str(cat.n))
     strScore.set("Score : " + str(cat.getScore()))
     if isAutocomplete:
@@ -135,11 +155,12 @@ def prevImage(cat,valueName, strNumber, strScore, entree, isAutocomplete):
         entree.focus()
     
     
-    
+# called upon pressing "next" button   
 def nextImage(cat,valueName, strNumber, strScore, entree, isAutocomplete):
     cat.changeName(valueName.get())
     cat.next()  
     valueName.set(cat.name)
+    # change the displayed index 
     strNumber.set(str(cat.i+1) + " / "+str(cat.n))
     strScore.set("Score : " + str(cat.getScore()))
     if isAutocomplete:
@@ -149,27 +170,35 @@ def nextImage(cat,valueName, strNumber, strScore, entree, isAutocomplete):
         entree.focus()
 
 
+# called upon pressing "validate" button at the end of prompt
 def validate(cat, root, valueName):
     cat.changeName(valueName.get())
 
+    # remove chars not suitable for windows file names
     illegal = ['NUL','\\','//',':','*','"','<','>','|','/','?',';',","]
     for name in cat.names:
         name.encode("utf-8")
         for i in illegal:
             name = name.replace(i, '')
+            
+    # cancels validation if there are duplicate names
     dupl=findDuplicates( filter(None, cat.names))
     if dupl: 
         message="Le nom "+ str(dupl) +" est en double, veuillez en changer un"
         tkMessageBox.showwarning("Doublon", message)
-        
+    
+    # warns if there lacks some names
     elif "" in cat.names :
         message="Il manque un nom en position "+ str(1 + cat.names.index("")) +", continuer quand même ?"
+        # if user bypasses warning : OK
         if tkMessageBox.askokcancel("Valider", message):
             root.destroy()
+    # if everything correct
     else:
         root.destroy()
 
 
+# true if there are dulicates in list
 def findDuplicates(in_list):  
     unique = set(in_list)  
     for each in unique:  
@@ -180,7 +209,7 @@ def findDuplicates(in_list):
 
 
 
-
+# initialize the UI
 def init(cat, fileEleves="noms.txt"):
     # initialize the window toolkit along with the image panel
     root = tk.Tk()
@@ -220,18 +249,20 @@ def init(cat, fileEleves="noms.txt"):
        entree = tk.Entry(Frame1, textvariable=valueName, width=60)
 
 
-    # Images precedentes, compteur et suivantes
+    # Image precedente
     frame3 = tk.Frame(root, relief=tk.GROOVE)
     frame3.pack(side=tk.TOP, padx=10, pady=10)
     btnPrec = tk.Button(frame3, text="Précédent", width=20, height=1, command=lambda:prevImage(cat,valueName, strNumber, strScore, entree, isAutocomplete))
     btnPrec.grid(row=1, column=1, padx=10)
     btnPrec.config(state=tk.DISABLED)
     
+    # compteur d'images
     strNumber = tk.StringVar() 
     strNumber.set("1 / "+ str(cat.n))
     labelNumber = tk.Label(frame3, textvariable =strNumber)
     labelNumber.grid(row=1, column=2, padx=5, pady=6)
     
+    # Image suivante
     btnSuiv = tk.Button(frame3, text="Suivant", width=20, height=1, command=lambda:nextImage(cat,valueName, strNumber, strScore, entree, isAutocomplete))
     btnSuiv.grid(row=1, column=3, padx=10)
     
@@ -256,7 +287,7 @@ def init(cat, fileEleves="noms.txt"):
     
 
 
-
+# displays warning if the user wants to close window
 def on_closing(root):
     if tkMessageBox.askokcancel("Quitter", "Voulez-vous quitter ?"):
         root.destroy()
@@ -265,19 +296,22 @@ def on_closing(root):
 
 
 
-# main
+# main function : displays the UI for prompting the names of the students
+# returns the prompted names
 def promptNames(scores, fileEleves='noms.txt'):    
     n=len(scores)
-    images = resize_name(n)
+    images = resize_name(n,scores)
     cat = ImageCatalogue(images, scores)
     root = init(cat, fileEleves)
+    
+    # displays warning if the user wants to close window
     root.protocol("WM_DELETE_WINDOW", lambda:on_closing(root))
+    
     root.mainloop()
-    print "names :" , cat.names
     return cat.names
 
 
-
+# for testing only
 if __name__ == '__main__':
     """import cProfile
      

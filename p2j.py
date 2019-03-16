@@ -6,6 +6,13 @@ from pdf2image import convert_from_path
 from PyPDF2 import PdfFileWriter, PdfFileReader
 
 
+"""
+This file contains functions to extract the pdf into multiple jpg images
+
+"""
+
+
+# split the pdf into multiple 1-page pdfs
 def splitPdf(inputPath):
     inputpdf = PdfFileReader(open(inputPath, "rb"))
     nbPages=inputpdf.numPages
@@ -17,7 +24,7 @@ def splitPdf(inputPath):
     return nbPages
 
 
-
+# transforms a 1-page pdf into a jpg image and delete the pdf
 def pageToImage(directory,i):
     path = directory + "\document-page%s.pdf" % i
     pages = convert_from_path(path, 200)
@@ -28,7 +35,7 @@ def pageToImage(directory,i):
     return 0
 
 
-
+# main function : transforms a pdf into multiple jpg, saved in the "run" directory
 def pdf2image(inputPath):
     directory = "run"
     try:
@@ -44,7 +51,7 @@ def pdf2image(inputPath):
         pageToImage(directory,i)
     return nbPages
 
-
+# only for testing
 if __name__ == '__main__':
     
     """
@@ -52,7 +59,7 @@ if __name__ == '__main__':
     pr = cProfile.Profile()
     pr.enable()
     """
-    pdf2image("Scan test\Toeic Test 3.pdf")#"Scan test\merged 252.pdf"
+    pdf2image("Scan test\Toeic Test 3.pdf")
     """
     pr.disable()
     pr.print_stats(sort='cumtime')

@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+
+
+"""
+This file contains functions to display the UI for choosing the input files
+"""
+
+
 import Tkinter as tk
 import tkFileDialog
 import tkMessageBox
@@ -9,15 +16,13 @@ fileCorrige = ""
 fileCopies = ""
 fileEleves = ""
 
-def openFile(string, types=[('pdf files', '.pdf')]):
-    #pour cacher l'autre root
-    #root = Tkinter.Tk()
-    #root.withdraw()
 
+# dialog window to open a file
+def openFile(string, types=[('pdf files', '.pdf')]):
     filepath = tkFileDialog.askopenfilename(title=string,filetypes=types)
     return(filepath)
 
-
+# opens a dialog window to open a pdf file and saves the result in fileCorrige
 def openCorrige(root, strCorrige, buttonValidate):
     global fileCorrige
     temp = openFile('Pdf du corrigé')
@@ -30,6 +35,7 @@ def openCorrige(root, strCorrige, buttonValidate):
     else:
         buttonValidate.config(state=tk.DISABLED)
 
+# opens a dialog window to open a pdf file and saves the result in fileCopies
 def openCopies(root, strCopies, buttonValidate):
     global fileCopies
     temp = openFile('Pdf des copies')
@@ -43,7 +49,7 @@ def openCopies(root, strCopies, buttonValidate):
         buttonValidate.config(state=tk.DISABLED)
         
         
-    
+# opens a dialog window to open a txt file and saves the result in fileEleves 
 def openEleves(root, strEleves):
     global fileEleves
     temp = openFile('Liste des élèves', [('text files', '.txt')])
@@ -53,36 +59,35 @@ def openEleves(root, strEleves):
     root.update_idletasks()
     
     
-
+# start the program
 def validate(root):
     if fileCorrige != "" and fileCopies != "":
         root.destroy()
 
 
 
-
+# displays warning if the user wants to close window
 def on_closing(root):
     if tkMessageBox.askokcancel("Quitter", "Voulez-vous quitter ?"):
         root.destroy()
         sys.exit(0)
 
 
-def interface1():
+# main function : displays the UI for choosing the input files
+def interface():
     root = tk.Tk()
-    #root.configure(background='white')
     root.title('Choix des pdf')
     root.minsize(300,10)
     root.iconbitmap("dev\logo.ico")
     
-    
+    # IMT logo
     imageEx = tk.PhotoImage(file = 'Dev/IMTLD_RVB_Baseline.gif')
     panelA = tk.Label(image=imageEx)
     panelA.image = imageEx
     panelA.grid(row=1, column=1)
     labelTitle = tk.Label(root, width=52, height=5, font=("Arial Bold", 13), text="Correction automatique de grilles de TOEIC", takefocus=0, justify=tk.LEFT, bg="#FFFFFF")
     labelTitle.grid(row=1, column=2)
-    #labelTitle.pack(side="top", fill="both", expand="yes", padx="10", pady="10")
-        
+ 
     
     strCorrige = tk.StringVar()
     strCorrige.set('Aucun')
@@ -94,9 +99,6 @@ def interface1():
 
     strEleves= tk.StringVar()
     strEleves.set('Aucun')
-    
-    progress = tk.StringVar()
-    progress.set('0%')
     
     
     tk.Button(root, text ='Pdf du corrigé', width=20, height=1, command=lambda:openCorrige(root, strCorrige, buttonValidate)).grid(row=2, column=1, padx=5, pady=5)
@@ -115,14 +117,14 @@ def interface1():
     buttonValidate.config(state=tk.DISABLED) 
 
 
-
+    # displays warning if the user wants to close window
     root.protocol("WM_DELETE_WINDOW", lambda:on_closing(root))
     root.mainloop()
     return(fileCorrige,fileCopies, fileEleves)
 
 
 
-
+# for testing only
 if __name__ == '__main__':
-    a=interface1()
+    a=interface()
     print(a)

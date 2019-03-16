@@ -5,6 +5,12 @@ Created on Sun Feb 24 10:33:59 2019
 @author: Guillaume
 """
 
+
+"""
+This file contains functions to call solve.py and score.py functions in a thread, while displaying a loading bar
+"""
+
+
 import Tkinter as tk
 from Queue import Queue
 import ttk, threading
@@ -37,14 +43,14 @@ def progress(thread, queue, parent):
 
 
 
-
+# if the user wants to close window, don't
 def on_closing(root):
     tkMessageBox.showinfo("Interruption", "Veuillez ne pas quitter pendant cette étape, qui dure environ 2min pour 100 copies")
     
         
 
 
-# threaded work
+# threaded work : solve.py, score.py
 def threadedWork(filepathCorr,filepathEleves, queue):
     pdfinfo_path = os.getcwd() + '\\poppler-0.68.0\\bin' 
     os.environ['PATH'] = pdfinfo_path + ';' + os.environ['PATH']
@@ -53,12 +59,14 @@ def threadedWork(filepathCorr,filepathEleves, queue):
     
     scores=compareAll(answersCorr,answersEleves)
     ret =  answersCorr,answersEleves, scores    
+    
+    # save the result in the queue for being retreived outside the thread 
     queue.put(ret)
 
 
 
 
-
+# main function : calls solve.py and score.py functions in a thread, while displaying a loading bar
 def loading(filepathCorr,filepathEleves):    
     queue = Queue()
     root = tk.Tk()
@@ -75,7 +83,7 @@ def loading(filepathCorr,filepathEleves):
 
 
 
-
+# for testing only
 if __name__ == '__main__':
     filepathCorr = "Scan test/Toeic Correction.pdf"
     filepathEleves = "Scan test/Toeic Test 1.pdf"

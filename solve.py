@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+"""
+This file contains functions to determine wich answers are given by ALL the students
+"""
+
 import cv2 as cv
 import numpy as np
 
@@ -9,33 +13,36 @@ from p2j import pdf2image
 from resize import resize
 
 
-
+# find which circles were darkened in a section
 def trouverLettre(part_img, coord, mask, circles, rayon, section=0, debug=False):
     reponseList=[]
+    #loop over all the section
     for i in range(0, 100, 1) :
-       
+        
+        # Crop the image
         roi_color = part_img[coord['y1'][i]:coord['y2'][i], coord['x1'][i]:coord['x2'][i]]
         
         ret, thresh = cv.threshold(roi_color, 170, 255, cv.THRESH_BINARY)
         
+        #apply mask
         img_tresh = cv.bitwise_and(thresh,thresh, mask=mask)
 
+        # determine the circles darkened over the limit and if there are double answers
         jc = 1
         minMeanjc = 0
-        #minMean = 255
         doubleReponse = False
+        limit = 115
         for j in circles:
             width2 = [int(j[0] - rayon), int(j[0] + rayon)]
             height2 = [int(j[1] - rayon), int(j[1] + rayon)]
 
             roi = img_tresh[height2[0]:height2[1], width2[0]:width2[1]]
 
-            if (cv.mean(roi)[0] < 115) and (not doubleReponse):
+            if (cv.mean(roi)[0] < limit) and (not doubleReponse):
                 if(minMeanjc != 0):
                     minMeanjc = 0
                     doubleReponse = True
                 else:
-                    #minMean = cv.mean(roi)[0]
                     minMeanjc = jc
             jc += 1
 
@@ -45,25 +52,19 @@ def trouverLettre(part_img, coord, mask, circles, rayon, section=0, debug=False)
 
         reponseList.append(minMeanjc)
 
-    
     return reponseList
 
 
 
 
 
-
+# find the answers given by 1 student
 def solve(img1, coordonneListening, coordonneReading, debug = False, rayon = 18):
-    #cv.imshow('Image', cv.resize(img1, (899 , 636)))
-    #cv.waitKey(0)
-
     width, height = img1.shape[:2]
-    #nom       = thresh[int(width*0.037386):int(width*0.074771), int(height*0.064528):int(height*0.473675)]
-    #prenom    = thresh[int(width*0.037386):int(width*0.074771), int(height*0.595639):int(height*0.981209)]
+
+    # split the image in 2 sections
     listening_color = img1[int(width*0.265768):int(width*0.966429), int(height*0.012143):int(height*0.481563)]
     reading_color   = img1[int(width*0.265768):int(width*0.966429), int(height*0.509484):int(height*0.978904)]
-
-
     listening = cv.cvtColor(listening_color, cv.COLOR_BGR2GRAY)
     reading = cv.cvtColor(reading_color, cv.COLOR_BGR2GRAY)
 
@@ -79,13 +80,12 @@ def solve(img1, coordonneListening, coordonneReading, debug = False, rayon = 18)
     
     circles = [[18,20], [72,20], [126,20], [181,20]]
 
-   
+    # draw the mask
     mask_img = np.zeros((height,width,1), np.uint8)
     for circle in circles:
          cv.circle(mask_img, (circle[0], circle[1]), rayon, (255, 255, 255), -1)
     ret, mask = cv.threshold(mask_img, 170, 255, cv.THRESH_BINARY)
 
-    
     result=trouverLettre(listening, coordonneListening, mask, circles, rayon, 0, debug)
     result+=trouverLettre(reading, coordonneReading, mask, circles, rayon, 100, debug)
 
@@ -94,9 +94,10 @@ def solve(img1, coordonneListening, coordonneReading, debug = False, rayon = 18)
 
 
 
-#prend en entree le chemin vers un pdf et donne les reponses ABCD donnees
+
+# main function : given the path of a pdf, finds all the answers (ABCD), chosen by all the students
 def getAnswers(filepath):
-    n = pdf2image(filepath)
+    
     results = []
     alphaList = ['None', 'A', 'B', 'C', 'D']
     rayon = 18
@@ -114,22 +115,24 @@ def getAnswers(filepath):
     }
     
     
-    for i in range(n):   
-        print i
-       
+    # converts pdf to n images
+    n = pdf2image(filepath)
+    
+    for i in range(n):
+        
         pathJPG = "run/out"+str(i)+".jpg"
         img = cv.imread(pathJPG)
         
+        # crop it to the outer rectangle
         img = resize(img)
         width, height = img.shape[:2]
         
         results.append(solve(img, coordonneListening, coordonneReading, False, rayon))
         
+        # draw the found answers on the image for user validation
         for j in range(len(results[i])):
-           
             if j<100:
-                if results[i][j]:
-                   
+                if results[i][j]:           
                     coord= (results[i][j]*54-int(height*0.00395)+coordonneListening['x1'][j],int(width*0.279)+coordonneListening['y1'][j])
                     cv.circle(img,coord, rayon, ( 255, 0, 0 ),thickness=2)
             else:
@@ -146,7 +149,7 @@ def getAnswers(filepath):
 
 
 
-
+# main used for testing
 if __name__ == '__main__':
     coordonneListening = {
         "x1" : [83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,335,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,590,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859,859],
@@ -163,7 +166,6 @@ if __name__ == '__main__':
 
     """
     import cProfile
-
     pr = cProfile.Profile()
     pr.enable()
     """
@@ -171,12 +173,5 @@ if __name__ == '__main__':
     result = solve(image, coordonneListening,coordonneReading, False  )
     """
     pr.disable()
-
     pr.print_stats(sort='cumtime')
     """
-
-
-#ic=1
-#for i in result:
-#    print(str(ic) + ' : ' + str(i))
-#    ic += 1
